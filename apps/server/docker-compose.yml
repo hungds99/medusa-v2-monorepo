@@ -1,0 +1,35 @@
+services:
+  admin_server:
+    container_name: admin_server
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    ports:
+      - "9000:9000"
+    environment:
+      - STORE_CORS=${STORE_CORS}
+      - ADMIN_CORS=${ADMIN_CORS}
+      - AUTH_CORS=${AUTH_CORS}
+      - JWT_SECRET=${JWT_SECRET}
+      - COOKIE_SECRET=${COOKIE_SECRET}
+      - DATABASE_URL=${DATABASE_URL}
+    volumes:
+      - .:/app
+    depends_on:
+      - admin_server_db
+
+  admin_server_db:
+    image: postgres:16.3-alpine3.20
+    container_name: admin_server_db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - admin_server_db:/var/lib/postgresql/data
+
+volumes:
+  admin_server_db:
