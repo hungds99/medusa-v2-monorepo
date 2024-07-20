@@ -90,12 +90,6 @@
     "mustBeInt": "The value must be a whole number.",
     "mustBePositive": "The value must be a positive number."
   },
-  "nav": {
-    "general": "General",
-    "developer": "Developer",
-    "extensions": "Extensions",
-    "settings": "Settings"
-  },
   "actions": {
     "save": "Save",
     "saveAsDraft": "Save as draft",
@@ -130,6 +124,7 @@
   },
   "app": {
     "search": {
+      "label": "Search",
       "allAreas": "All areas",
       "navigation": "Navigation",
       "openResult": "Open result",
@@ -139,27 +134,74 @@
       "pageShortcut": "Jump to",
       "settingShortcut": "Settings",
       "commandShortcut": "Commands",
-      "goToOrders": "Go to orders",
-      "goToProducts": "Go to products",
-      "goToCollections": "Go to collections",
-      "goToCategories": "Go to categories",
-      "goToCustomers": "Go to customers",
-      "goToCustomerGroups": "Go to customer groups",
-      "goToInventory": "Go to inventory",
-      "goToReservations": "Go to reservations",
-      "goToPriceLists": "Go to price lists",
-      "goToPromotions": "Go to promotions",
-      "goToCampaigns": "Go to campaigns",
-      "goToStore": "Go to store",
-      "goToUsers": "Go to users",
-      "goToRegions": "Go to regions",
-      "goToTaxRegions": "Go to tax region",
-      "goToSalesChannels": "Go to sales channels",
-      "goToProductTypes": "Go to product types",
-      "goToLocations": "Go to locations",
-      "goToPublishableApiKeys": "Go to publishable API keys",
-      "goToSecretApiKeys": "Go to secret API keys",
-      "goToWorkflows": "Go to workflows"
+      "then": "then",
+      "navigation": {
+        "goToOrders": "Orders",
+        "goToProducts": "Products",
+        "goToCollections": "Collections",
+        "goToCategories": "Categories",
+        "goToCustomers": "Customers",
+        "goToCustomerGroups": "Customer Groups",
+        "goToInventory": "Inventory",
+        "goToReservations": "Reservations",
+        "goToPriceLists": "Price Lists",
+        "goToPromotions": "Promotions",
+        "goToCampaigns": "Campaigns"
+      },
+      "settings": {
+        "goToSettings": "Settings",
+        "goToStore": "Store",
+        "goToUsers": "Users",
+        "goToRegions": "Regions",
+        "goToTaxRegions": "Tax Regions",
+        "goToSalesChannels": "Sales Channels",
+        "goToProductTypes": "Product Types",
+        "goToLocations": "Locations",
+        "goToPublishableApiKeys": "Publishable API Keys",
+        "goToSecretApiKeys": "Secret API Keys",
+        "goToWorkflows": "Workflows",
+        "goToProfile": "Profile"
+      }
+    },
+    "menus": {
+      "user": {
+        "documentation": "Documentation",
+        "changelog": "Changelog",
+        "shortcuts": "Shortcuts",
+        "profileSettings": "Profile settings",
+        "theme": {
+          "label": "Theme",
+          "dark": "Dark",
+          "light": "Light",
+          "system": "System"
+        }
+      },
+      "store": {
+        "label": "Store",
+        "storeSettings": "Store settings"
+      },
+      "actions": {
+        "logout": "Log out"
+      }
+    },
+    "nav": {
+      "accessibility": {
+        "title": "Navigation",
+        "description": "Navigation menu for the dashboard."
+      },
+      "common": {
+        "extensions": "Extensions"
+      },
+      "main": {
+        "store": "Store",
+        "storeSettings": "Store settings"
+      },
+      "settings": {
+        "header": "Settings",
+        "general": "General",
+        "developer": "Developer",
+        "myAccount": "My Account"
+      }
     }
   },
   "filters": {
@@ -579,6 +621,7 @@
       "header": "Reservation of {{itemName}}",
       "editItemDetails": "Edit reservation",
       "lineItemId": "Line item ID",
+      "orderID": "Order ID",
       "description": "Description",
       "location": "Location",
       "inStockAtLocation": "In stock at this location",
@@ -1709,6 +1752,8 @@
     "inviteLinkTemplate": "Invite link template",
     "currencies": "Currencies",
     "addCurrencies": "Add currencies",
+    "enableTaxInclusivePricing": "Enable tax inclusive pricing",
+    "disableTaxInclusivePricing": "Disable tax inclusive pricing",
     "removeCurrencyWarning_one": "You are about to remove {{count}} currency from your store. Ensure that you have removed all prices using the currency before proceeding.",
     "removeCurrencyWarning_other": "You are about to remove {{count}} currencies from your store. Ensure that you have removed all prices using the currencies before proceeding.",
     "currencyAlreadyAdded": "The currency has already been added to your store.",
@@ -1718,7 +1763,8 @@
     "toast": {
       "update": "Store successfully updated",
       "currenciesUpdated": "Currencies updated successfully",
-      "currenciesRemoved": "Removed currencies from the store successfully"
+      "currenciesRemoved": "Removed currencies from the store successfully",
+      "updatedTaxInclusivitySuccessfully": "Tax inclusive pricing updated successfully"
     }
   },
   "regions": {
