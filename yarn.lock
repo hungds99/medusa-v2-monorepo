@@ -1605,7 +1605,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@medusajs/admin-shared@0.0.1, @medusajs/admin-shared@workspace:packages/admin-shared":
+"@medusajs/admin-shared@npm:0.0.2-preview-20240713150433":
+  version: 0.0.2-preview-20240713150433
+  resolution: "@medusajs/admin-shared@npm:0.0.2-preview-20240713150433"
+  checksum: 1d70a1cf3275302ec71a496f27c4bb8015a7ba2b55e7e6b418ffb94dd445d5231268d7c457b611f6bff3e372593015c66bd0c945988aab5429891e7e1db8a1eb
+  languageName: node
+  linkType: hard
+
+"@medusajs/admin-shared@workspace:packages/admin-shared":
   version: 0.0.0-use.local
   resolution: "@medusajs/admin-shared@workspace:packages/admin-shared"
   dependencies:
@@ -1614,13 +1621,6 @@ __metadata:
     typescript: ^5.3.3
   languageName: unknown
   linkType: soft
-
-"@medusajs/admin-shared@npm:0.0.2-preview-20240713150433":
-  version: 0.0.2-preview-20240713150433
-  resolution: "@medusajs/admin-shared@npm:0.0.2-preview-20240713150433"
-  checksum: 1d70a1cf3275302ec71a496f27c4bb8015a7ba2b55e7e6b418ffb94dd445d5231268d7c457b611f6bff3e372593015c66bd0c945988aab5429891e7e1db8a1eb
-  languageName: node
-  linkType: hard
 
 "@medusajs/admin-vite-plugin@npm:0.0.2-preview-20240713150433":
   version: 0.0.2-preview-20240713150433
@@ -1645,7 +1645,7 @@ __metadata:
     "@babel/parser": 7.23.5
     "@babel/traverse": 7.23.5
     "@babel/types": 7.22.5
-    "@medusajs/admin-shared": 0.0.1
+    "@medusajs/admin-shared": 0.0.2-preview-20240713150433
     "@types/babel__traverse": 7.20.5
     "@types/node": ^20.10.4
     chokidar: 3.5.3
