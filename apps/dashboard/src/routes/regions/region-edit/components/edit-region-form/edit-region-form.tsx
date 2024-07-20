@@ -74,9 +74,9 @@ export const EditRegionForm = ({
           toast.success(t("regions.toast.edit"))
           handleSuccess()
         },
-        onError: (e) => {
-          toast.error(e.message)
-        },
+        // onError: (e) => {
+        //   toast.error(e.message)
+        // },
       }
     )
   })
