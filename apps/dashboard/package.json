@@ -1,5 +1,5 @@
 {
-  "name": "@medusajs/dashboard",
+  "name": "@mds/dashboard",
   "version": "0.0.1",
   "scripts": {
     "generate:static": "node ./scripts/generate-countries.js && prettier --write ./src/lib/countries.ts && node ./scripts/generate-currencies.js && prettier --write ./src/lib/currencies.ts",

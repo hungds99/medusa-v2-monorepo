@@ -1,5 +1,5 @@
 {
-  "name": "medusa-starter-default",
+  "name": "@mds/api",
   "version": "0.0.1",
   "description": "A starter for Medusa projects.",
   "author": "Medusa (https://medusajs.com)",
@@ -45,6 +45,7 @@
     "@medusajs/store": "preview",
     "@medusajs/tax": "preview",
     "@medusajs/user": "preview",
+    "@medusajs/utils": "1.12.0-preview-20240713150433",
     "@medusajs/workflow-engine-inmemory": "preview",
     "express": "^4.17.2"
   },

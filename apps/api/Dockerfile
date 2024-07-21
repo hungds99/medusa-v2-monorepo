@@ -1,6 +1,5 @@
 ARG NODE_VERSION=22-alpine
 
-
 FROM node:${NODE_VERSION} AS base
 # Create app directory
 WORKDIR /app
@@ -8,7 +7,6 @@ WORKDIR /app
 EXPOSE 9000
 # Set up yarn package manager
 RUN corepack enable
-RUN yarn set version stable
 
 FROM base AS deps
 # Copy app dependencies
