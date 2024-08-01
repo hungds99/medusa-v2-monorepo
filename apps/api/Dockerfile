@@ -1,31 +1,30 @@
 ARG NODE_VERSION=22-alpine
 
 FROM node:${NODE_VERSION} AS base
-# Create app directory
 WORKDIR /app
-# Expose the port the app runs on
+
 EXPOSE 9000
-# Set up yarn package manager
 RUN corepack enable
 
 FROM base AS deps
-# Copy app dependencies
-COPY package*.json yarn.lock .yarnrc.yml ./
-# Install app dependencies
-RUN yarn install --frozen-lockfile
+WORKDIR /app
+
+COPY package.json ./
+COPY yarn.lock .yarnrc.yml ./
+COPY apps/api/package.json ./apps/api/
+RUN yarn install
 
 # Development stage
 FROM deps AS development
-# Copy app source code
+WORKDIR /app
+
 COPY . .
-# Start the app
 CMD ["yarn", "dev"]
 
 # Production stage
 FROM deps AS production
-# Copy app source code
+WORKDIR /app
+
 COPY . .
-# Build the app
-RUN yarn build
-# Start the app
-CMD ["yarn", "start"]
+RUN yarn turbo run build --filter=@mds/api
+CMD yarn turbo run start --filter=@mds/api
