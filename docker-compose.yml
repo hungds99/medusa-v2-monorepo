@@ -1,3 +1,5 @@
+name: mds-v2-monorepo
+
 services:
   mds-api:
     container_name: mds-api

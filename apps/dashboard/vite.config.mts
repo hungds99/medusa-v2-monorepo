@@ -28,7 +28,6 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       port: 7001,
-      open: true,
     },
   }
 })
