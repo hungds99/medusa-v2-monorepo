@@ -27,6 +27,7 @@ export default defineConfig(({ mode }) => {
       __BACKEND_URL__: JSON.stringify(BACKEND_URL),
     },
     server: {
+      port: 7001,
       open: true,
     },
   }
