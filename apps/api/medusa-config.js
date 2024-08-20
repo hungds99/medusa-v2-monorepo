@@ -16,5 +16,12 @@ module.exports = defineConfig({
   admin: {
     disable: true,
   },
-  plugins: [],
+  plugins: [
+    {
+      resolve: 'medusa-payment-stripe',
+      options: {
+        api_key: process.env.STRIPE_API_KEY,
+      },
+    },
+  ],
 });

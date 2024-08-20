@@ -1354,6 +1354,7 @@ __metadata:
     "@types/node": ^17.0.8
     "@types/react": ^18.3.2
     express: ^4.17.2
+    medusa-payment-stripe: ^6.0.11
     ts-node: ^10.9.2
     typescript: ^4.5.2
   languageName: unknown
@@ -2029,6 +2030,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@medusajs/types@npm:^1.11.17":
+  version: 1.11.17
+  resolution: "@medusajs/types@npm:1.11.17"
+  checksum: 37b96a957b94ff404f64a3710b2943b3b1ce94ced6d5d7aa5a44bfd7565885ebe02c358590328bdec29da14e4da77153093ecac12c77fc29d2f4e1c829c3da70
+  languageName: node
+  linkType: hard
+
 "@medusajs/ui-preset@npm:1.1.3":
   version: 1.1.3
   resolution: "@medusajs/ui-preset@npm:1.1.3"
@@ -2110,6 +2118,22 @@ __metadata:
     pluralize: "npm:^8.0.0"
     ulid: "npm:^2.3.0"
   checksum: 35c8249357254b513972f20388cd94e18298465749c4085c477e10c0635b92ac1569999d021912df2f9c14be6a5226620b2bf0bf4f5d94ac0e0b7f5f0e382e35
+  languageName: node
+  linkType: hard
+
+"@medusajs/utils@npm:^1.11.10":
+  version: 1.11.10
+  resolution: "@medusajs/utils@npm:1.11.10"
+  dependencies:
+    "@medusajs/types": ^1.11.17
+    "@mikro-orm/core": 5.9.7
+    "@mikro-orm/migrations": 5.9.7
+    "@mikro-orm/postgresql": 5.9.7
+    awilix: ^8.0.1
+    bignumber.js: ^9.1.2
+    knex: 2.4.2
+    ulid: ^2.3.0
+  checksum: e2d9277eb0d59e1085c241ec0ebd44a6c3dad1d984c75af914e9393f9ede3bacb7708bee7e68d0cc8cb4e25cada280de603f87f2f6b539e0683b76b20ece62c1
   languageName: node
   linkType: hard
 
@@ -6663,6 +6687,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node@npm:>=8.1.0":
+  version: 22.4.1
+  resolution: "@types/node@npm:22.4.1"
+  dependencies:
+    undici-types: ~6.19.2
+  checksum: 341eb54867a3ec8eee7853ff9a9fc92d9f66305b70c9bc5db78492d51f4da3cd81e50c077f5d98eef1835fcbca00c58bb2a229ef56b0e377e48a3284401bf3f6
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:^17.0.8":
   version: 17.0.45
   resolution: "@types/node@npm:17.0.45"
@@ -10124,6 +10157,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"medusa-payment-stripe@npm:^6.0.11":
+  version: 6.0.11
+  resolution: "medusa-payment-stripe@npm:6.0.11"
+  dependencies:
+    "@medusajs/utils": ^1.11.10
+    body-parser: ^1.19.0
+    express: ^4.17.1
+    stripe: ^11.10.0
+  peerDependencies:
+    "@medusajs/medusa": ^1.12.0
+    "@tanstack/react-table": ^8.7.9
+    medusa-react: ^9.0.0
+  peerDependenciesMeta:
+    "@tanstack/react-table":
+      optional: true
+    medusa-react:
+      optional: true
+  checksum: e2e08c3a127ee59cb3a68c6ef52d262e91a66ab5b9d97e12b421377e458dd65b618f4106bcc600943d57ecd10832a071c37f1b4b572a9b32e1482c488b836bad
+  languageName: node
+  linkType: hard
+
 "medusa-telemetry@npm:0.0.18-preview-20240713150433":
   version: 0.0.18-preview-20240713150433
   resolution: "medusa-telemetry@npm:0.0.18-preview-20240713150433"
@@ -11286,6 +11340,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"qs@npm:^6.11.0":
+  version: 6.13.0
+  resolution: "qs@npm:6.13.0"
+  dependencies:
+    side-channel: ^1.0.6
+  checksum: e9404dc0fc2849245107108ce9ec2766cde3be1b271de0bf1021d049dc5b98d1a2901e67b431ac5509f865420a7ed80b7acb3980099fe1c118a1c5d2e1432ad8
+  languageName: node
+  linkType: hard
+
 "qs@npm:^6.11.2, qs@npm:^6.12.0, qs@npm:^6.12.1":
   version: 6.12.3
   resolution: "qs@npm:6.12.3"
@@ -12420,6 +12483,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"stripe@npm:^11.10.0":
+  version: 11.18.0
+  resolution: "stripe@npm:11.18.0"
+  dependencies:
+    "@types/node": ">=8.1.0"
+    qs: ^6.11.0
+  checksum: 7da0195730df921c983560f22820797c1a9f8bc200e89012a87180d65628506a98fe400dca2c6e78ea98b9b931fac62dd9c223920566e0aa71468ec6cc671695
+  languageName: node
+  linkType: hard
+
 "sucrase@npm:^3.20.3, sucrase@npm:^3.32.0, sucrase@npm:^3.35.0":
   version: 3.35.0
   resolution: "sucrase@npm:3.35.0"
@@ -13077,6 +13150,13 @@ __metadata:
   version: 5.26.5
   resolution: "undici-types@npm:5.26.5"
   checksum: 3192ef6f3fd5df652f2dc1cd782b49d6ff14dc98e5dced492aa8a8c65425227da5da6aafe22523c67f035a272c599bb89cfe803c1db6311e44bed3042fc25487
+  languageName: node
+  linkType: hard
+
+"undici-types@npm:~6.19.2":
+  version: 6.19.6
+  resolution: "undici-types@npm:6.19.6"
+  checksum: e66df2447b6d93a48b0605a54269d8c3f228edcd1e9563229f6de37e48ed53b3e49b4bc965733643ed9717e0e0fa1ee664c929db91d787c9f488fb3f9e17c533
   languageName: node
   linkType: hard
 

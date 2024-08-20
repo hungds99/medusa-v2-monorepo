@@ -47,7 +47,8 @@
     "@medusajs/user": "preview",
     "@medusajs/utils": "1.12.0-preview-20240713150433",
     "@medusajs/workflow-engine-inmemory": "preview",
-    "express": "^4.17.2"
+    "express": "^4.17.2",
+    "medusa-payment-stripe": "^6.0.11"
   },
   "devDependencies": {
     "@medusajs/medusa-cli": "preview",
