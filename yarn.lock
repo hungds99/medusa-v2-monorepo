@@ -1316,6 +1316,7 @@ __metadata:
   dependencies:
     "@medusajs/api-key": preview
     "@medusajs/auth": preview
+    "@medusajs/auth-emailpass": preview
     "@medusajs/cache-inmemory": preview
     "@medusajs/cart": preview
     "@medusajs/currency": preview
@@ -1509,6 +1510,16 @@ __metadata:
     "@medusajs/utils": "npm:1.12.0-preview-20240713150433"
     scrypt-kdf: "npm:^2.0.1"
   checksum: 5b62df9fcd038ed9ec3b87c2ed93535e5957bc07cdfe436eb9391bcd2d0eb1ebd622d44718cfda9ac32161af60d8211c120db281f862ce8f00a82372f15a7ac3
+  languageName: node
+  linkType: hard
+
+"@medusajs/auth-emailpass@npm:preview":
+  version: 0.0.2-preview-20240820060557
+  resolution: "@medusajs/auth-emailpass@npm:0.0.2-preview-20240820060557"
+  dependencies:
+    "@medusajs/utils": 1.12.0-preview-20240820060557
+    scrypt-kdf: ^2.0.1
+  checksum: b57c126a8a1e4f3011792084175b23d05154305ff19cc82e7f35b7b295ac0589b2f8cbd63b27314aaedbd49d204d5a5a84ae20358dc5ff2c86b3f64e93139b23
   languageName: node
   linkType: hard
 
@@ -2030,6 +2041,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@medusajs/types@npm:1.12.0-preview-20240820060557":
+  version: 1.12.0-preview-20240820060557
+  resolution: "@medusajs/types@npm:1.12.0-preview-20240820060557"
+  checksum: df5b1a5c32da05f944ce3bb5962ca877fb73b048dc95c3dc38c92dcc0f063ed03d98a0ff82b5fce2ca4c6abbfe515e89b609999194e1cfe1f2de733a8dd33ddd
+  languageName: node
+  linkType: hard
+
 "@medusajs/types@npm:^1.11.17":
   version: 1.11.17
   resolution: "@medusajs/types@npm:1.11.17"
@@ -2118,6 +2136,26 @@ __metadata:
     pluralize: "npm:^8.0.0"
     ulid: "npm:^2.3.0"
   checksum: 35c8249357254b513972f20388cd94e18298465749c4085c477e10c0635b92ac1569999d021912df2f9c14be6a5226620b2bf0bf4f5d94ac0e0b7f5f0e382e35
+  languageName: node
+  linkType: hard
+
+"@medusajs/utils@npm:1.12.0-preview-20240820060557":
+  version: 1.12.0-preview-20240820060557
+  resolution: "@medusajs/utils@npm:1.12.0-preview-20240820060557"
+  dependencies:
+    "@medusajs/types": 1.12.0-preview-20240820060557
+    "@mikro-orm/core": 5.9.7
+    "@mikro-orm/migrations": 5.9.7
+    "@mikro-orm/postgresql": 5.9.7
+    awilix: ^8.0.1
+    bignumber.js: ^9.1.2
+    dotenv: ^16.4.5
+    json-2-csv: ^5.5.4
+    jsonwebtoken: ^9.0.2
+    knex: 2.4.2
+    pluralize: ^8.0.0
+    ulid: ^2.3.0
+  checksum: e463d2deded9781aec1e7d3824b8525f4831eaeaaa027de1a997b09acdbc89fc45698c09064a562f7dfd48cc40ea46df0c333162c41d9f9c137f64b4082f594f
   languageName: node
   linkType: hard
 
@@ -8057,6 +8095,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"deeks@npm:3.1.0":
+  version: 3.1.0
+  resolution: "deeks@npm:3.1.0"
+  checksum: d4b92aea7bee3a77adad0d84da67c8afe9693cc22c89bf10e01bc30eb0dd5e53a7958ce12f6f0b5f1cbb0f54f0a7aa603555725688fc0eb3a6ce80e6950be05a
+  languageName: node
+  linkType: hard
+
 "defaults@npm:^1.0.3":
   version: 1.0.4
   resolution: "defaults@npm:1.0.4"
@@ -8139,6 +8184,13 @@ __metadata:
   version: 1.1.3
   resolution: "dlv@npm:1.1.3"
   checksum: d7381bca22ed11933a1ccf376db7a94bee2c57aa61e490f680124fa2d1cd27e94eba641d9f45be57caab4f9a6579de0983466f620a2cd6230d7ec93312105ae7
+  languageName: node
+  linkType: hard
+
+"doc-path@npm:4.1.1":
+  version: 4.1.1
+  resolution: "doc-path@npm:4.1.1"
+  checksum: 41e7d59cb460073e1bc1ede88117e885d3e2fc53218cdc176820660465ebda59330355d12605b96fb13b88754826b471bfec2ec832f145d2f561f53ec3066a0f
   languageName: node
   linkType: hard
 
@@ -9716,6 +9768,16 @@ __metadata:
   bin:
     jsesc: bin/jsesc
   checksum: 4dc190771129e12023f729ce20e1e0bfceac84d73a85bc3119f7f938843fe25a4aeccb54b6494dce26fcf263d815f5f31acdefac7cc9329efb8422a4f4d9fa9d
+  languageName: node
+  linkType: hard
+
+"json-2-csv@npm:^5.5.4":
+  version: 5.5.5
+  resolution: "json-2-csv@npm:5.5.5"
+  dependencies:
+    deeks: 3.1.0
+    doc-path: 4.1.1
+  checksum: b9e4470108e054fd3c7e8b435b4c649aa4e2eb9333721a62b61079df583175c4b546e536c604ac58f2d3ef48ac40959de139e5b45a6933271c811c6dd7b323f7
   languageName: node
   linkType: hard
 
