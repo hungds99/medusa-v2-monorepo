@@ -1,4 +1,4 @@
-import { CheckCircle, Plus, Trash, XCircle } from "@medusajs/icons"
+import { CheckCircleSolid, Plus, Trash, XCircle } from "@medusajs/icons"
 import { HttpTypes } from "@medusajs/types"
 import {
   Checkbox,
@@ -77,7 +77,7 @@ export const StoreCurrencySection = ({ store }: StoreCurrencySectionProps) => {
   }))
 
   const { table } = useDataTable({
-    data: withTaxInclusivity ?? [],
+    data: withTaxInclusivity ?? [] as any,
     columns,
     count: count,
     getRowId: (row) => row.code,
@@ -284,7 +284,7 @@ const CurrencyActions = ({
               icon: preferencesMap.get(currency.code)?.is_tax_inclusive ? (
                 <XCircle />
               ) : (
-                <CheckCircle />
+                <CheckCircleSolid />
               ),
               label: preferencesMap.get(currency.code)?.is_tax_inclusive
                 ? t("store.disableTaxInclusivePricing")
