@@ -31,7 +31,7 @@ A subscriber file must export:
 
 A subscriber receives an object having the following properties:
 
-- `data`: The data payload of the event.
+- `event`: An object holding the event's details. It has a `data` property, which is the event's data payload.
 - `container`: The Medusa container. Use it to resolve modules' main services and other registered resources.
 
 ```ts
@@ -40,13 +40,13 @@ import type {
   SubscriberConfig,
 } from "@medusajs/medusa"
 import { IProductModuleService } from "@medusajs/types"
-import { ModuleRegistrationName } from "@medusajs/modules-sdk"
+import { ModuleRegistrationName } from "@medusajs/utils"
 
 export default async function productCreateHandler({
-  data,
+  event: { data },
   container,
 }: SubscriberArgs<{ id: string }>) {
-  const productId = "data" in data ? data.data.id : data.id
+  const productId = data.id
 
   const productModuleService: IProductModuleService =
     container.resolve(ModuleRegistrationName.PRODUCT)

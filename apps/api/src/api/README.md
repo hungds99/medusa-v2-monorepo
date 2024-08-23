@@ -58,19 +58,14 @@ For example, if you want to define a route that takes a `productId` parameter, y
 import type {
   MedusaRequest,
   MedusaResponse,
-  ProductService,
-} from "@medusajs/medusa";
+} from "@medusajs/medusa"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const { productId } = req.params;
 
-  const productService: ProductService = req.scope.resolve("productService");
-
-  const product = await productService.retrieve(productId);
-
   res.json({
-    product,
-  });
+    message: `You're looking for product ${productId}`
+  })
 }
 ```
 
@@ -88,7 +83,7 @@ import type {
   MedusaResponse,
 } from "@medusajs/medusa"
 import { IProductModuleService } from "@medusajs/types"
-import { ModuleRegistrationName } from "@medusajs/modules-sdk"
+import { ModuleRegistrationName } from "@medusajs/utils"
 
 export const GET = async (
   req: MedusaRequest,
@@ -112,8 +107,8 @@ You can apply middleware to your routes by creating a file called `/api/middlewa
 For example, if you want to apply a custom middleware function to the `/store/custom` route, you can do so by adding the following to your `/api/middlewares.ts` file:
 
 ```ts
+import { defineMiddlewares } from "@medusajs/medusa"
 import type {
-  MiddlewaresConfig,
   MedusaRequest,
   MedusaResponse,
   MedusaNextFunction,
@@ -128,14 +123,14 @@ async function logger(
   next();
 }
 
-export const config: MiddlewaresConfig = {
+export default defineMiddlewares({
   routes: [
     {
       matcher: "/store/custom",
       middlewares: [logger],
     },
   ],
-};
+})
 ```
 
 The `matcher` property can be either a string or a regular expression. The `middlewares` property accepts an array of middleware functions.
