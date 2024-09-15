@@ -27,4 +27,5 @@ WORKDIR /app
 
 COPY . .
 RUN yarn turbo run build --filter=@mds/dashboard
-CMD yarn turbo run start --filter=@mds/dashboard
+
+CMD ["yarn", "turbo", "run", "start", "--filter=@mds/dashboard"]

@@ -6,7 +6,7 @@
     "dev": "vite",
     "build": "tsup && node ./scripts/generate-types.js",
     "build:preview": "vite build",
-    "start": "vite",
+    "start": "vite --host",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
