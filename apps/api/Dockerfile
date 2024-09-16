@@ -27,4 +27,5 @@ WORKDIR /app
 
 COPY . .
 RUN yarn turbo run build --filter=@mds/api
-CMD yarn turbo run start --filter=@mds/api
+
+CMD ["yarn", "turbo", "run", "start", "--filter=@mds/api"]
