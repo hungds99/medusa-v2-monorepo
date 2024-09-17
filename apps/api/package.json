@@ -47,6 +47,7 @@
     "@medusajs/store": "preview",
     "@medusajs/tax": "preview",
     "@medusajs/user": "preview",
+    "@medusajs/utils": "preview",
     "@medusajs/workflow-engine-inmemory": "preview",
     "express": "^4.17.2"
   },
