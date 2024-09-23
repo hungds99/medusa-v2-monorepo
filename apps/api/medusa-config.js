@@ -3,6 +3,9 @@ const { defineConfig, Modules, loadEnv } = require("@medusajs/utils")
 loadEnv(process.env.NODE_ENV, process.cwd())
 
 module.exports = defineConfig({
+  admin: {
+    disable: true,
+  },
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
     http: {
