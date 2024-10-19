@@ -1,1 +1,1 @@
-# plugin-extension
+# @medusajs/admin-vite-plugin

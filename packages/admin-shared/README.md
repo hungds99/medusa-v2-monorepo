@@ -1,1 +1,1 @@
-# shared
+# @medusajs/admin-shared

@@ -62,6 +62,13 @@ const PRODUCT_TYPE_INJECTION_ZONES = [
   "product_type.list.after",
 ] as const
 
+const PRODUCT_TAG_INJECTION_ZONES = [
+  "product_tag.details.before",
+  "product_tag.details.after",
+  "product_tag.list.before",
+  "product_tag.list.after",
+] as const
+
 const PRICE_LIST_INJECTION_ZONES = [
   "price_list.details.before",
   "price_list.details.after",
@@ -161,7 +168,7 @@ const API_KEY_INJECTION_ZONES = [
   "api_key.details.after",
   "api_key.list.before",
   "api_key.list.after",
-]
+] as const
 
 const WORKFLOW_INJECTION_ZONES = [
   "workflow.details.before",
@@ -175,6 +182,20 @@ const TAX_INJECTION_ZONES = [
   "tax.details.after",
   "tax.list.before",
   "tax.list.after",
+] as const
+
+const RETURN_REASON_INJECTION_ZONES = [
+  "return_reason.list.before",
+  "return_reason.list.after",
+] as const
+
+const INVENTORY_ITEM_INJECTION_ZONES = [
+  "inventory_item.details.before",
+  "inventory_item.details.after",
+  "inventory_item.details.side.before",
+  "inventory_item.details.side.after",
+  "inventory_item.list.before",
+  "inventory_item.list.after",
 ] as const
 
 /**
@@ -206,4 +227,7 @@ export const INJECTION_ZONES = [
   ...CAMPAIGN_INJECTION_ZONES,
   ...TAX_INJECTION_ZONES,
   ...PRODUCT_TYPE_INJECTION_ZONES,
+  ...PRODUCT_TAG_INJECTION_ZONES,
+  ...RETURN_REASON_INJECTION_ZONES,
+  ...INVENTORY_ITEM_INJECTION_ZONES,
 ] as const
