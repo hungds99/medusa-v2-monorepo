@@ -1,12 +1,13 @@
 import { useMemo } from "react"
 import { UseFormReturn } from "react-hook-form"
 
-import { DataGridRoot } from "../../../../../components/data-grid/data-grid-root"
+import { DataGrid } from "../../../../../components/data-grid"
+import { useRouteModal } from "../../../../../components/modals"
+import { usePricePreferences } from "../../../../../hooks/api/price-preferences"
 import { useRegions } from "../../../../../hooks/api/regions"
 import { useStore } from "../../../../../hooks/api/store"
 import { useShippingOptionPriceColumns } from "../../../common/hooks/use-shipping-option-price-columns"
 import { CreateShippingOptionSchema } from "./schema"
-import { usePricePreferences } from "../../../../../hooks/api/price-preferences"
 
 type PricingPricesFormProps = {
   form: UseFormReturn<CreateShippingOptionSchema>
@@ -39,13 +40,15 @@ export const CreateShippingOptionsPricesForm = ({
 
   const { price_preferences: pricePreferences } = usePricePreferences({})
 
+  const { setCloseOnEscape } = useRouteModal()
+
   const columns = useShippingOptionPriceColumns({
     currencies,
     regions,
     pricePreferences,
   })
 
-  const initializing = isStoreLoading || !store || isRegionsLoading || !regions
+  const isLoading = isStoreLoading || !store || isRegionsLoading || !regions
 
   const data = useMemo(
     () => [[...(currencies || []), ...(regions || [])]],
@@ -62,7 +65,13 @@ export const CreateShippingOptionsPricesForm = ({
 
   return (
     <div className="flex size-full flex-col divide-y overflow-hidden">
-      <DataGridRoot data={data} columns={columns} state={form} />
+      <DataGrid
+        isLoading={isLoading}
+        data={data}
+        columns={columns}
+        state={form}
+        onEditingChange={(editing) => setCloseOnEscape(!editing)}
+      />
     </div>
   )
 }

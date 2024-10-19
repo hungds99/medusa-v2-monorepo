@@ -1,5 +1,5 @@
 import { PencilSquare, Trash } from "@medusajs/icons"
-import { SalesChannelDTO } from "@medusajs/types"
+import { HttpTypes } from "@medusajs/types"
 import {
   Button,
   Container,
@@ -20,6 +20,7 @@ import {
   useSalesChannels,
 } from "../../../../hooks/api/sales-channels"
 import { useSalesChannelTableColumns } from "../../../../hooks/table/columns/use-sales-channel-table-columns"
+import { useSalesChannelTableFilters } from "../../../../hooks/table/filters"
 import { useSalesChannelTableQuery } from "../../../../hooks/table/query/use-sales-channel-table-query"
 import { useDataTable } from "../../../../hooks/use-data-table"
 
@@ -42,6 +43,7 @@ export const SalesChannelListTable = () => {
   })
 
   const columns = useColumns()
+  const filters = useSalesChannelTableFilters()
 
   const { table } = useDataTable({
     data: sales_channels ?? [],
@@ -60,7 +62,7 @@ export const SalesChannelListTable = () => {
     <Container className="divide-y p-0">
       <div className="flex items-center justify-between px-6 py-4">
         <div>
-          <Heading level="h2">{t("salesChannels.domain")}</Heading>
+          <Heading>{t("salesChannels.domain")}</Heading>
           <Text className="text-ui-fg-subtle" size="small">
             {t("salesChannels.subtitle")}
           </Text>
@@ -76,6 +78,7 @@ export const SalesChannelListTable = () => {
         columns={columns}
         count={count}
         pageSize={PAGE_SIZE}
+        filters={filters}
         pagination
         search
         navigateTo={(row) => row.id}
@@ -90,7 +93,7 @@ export const SalesChannelListTable = () => {
 const SalesChannelActions = ({
   salesChannel,
 }: {
-  salesChannel: SalesChannelDTO
+  salesChannel: HttpTypes.AdminSalesChannel
 }) => {
   const { t } = useTranslation()
   const prompt = usePrompt()
@@ -148,7 +151,7 @@ const SalesChannelActions = ({
   )
 }
 
-const columnHelper = createColumnHelper<SalesChannelDTO>()
+const columnHelper = createColumnHelper<HttpTypes.AdminSalesChannel>()
 
 const useColumns = () => {
   const base = useSalesChannelTableColumns()

@@ -7,6 +7,7 @@ import {
   CurrencyInput,
   Heading,
   Input,
+  ProgressStatus,
   ProgressTabs,
   RadioGroup,
   Text,
@@ -60,9 +61,15 @@ const defaultValues = {
   campaign: undefined,
 }
 
+type TabState = Record<Tab, ProgressStatus>
+
 export const CreatePromotionForm = () => {
   const [tab, setTab] = useState<Tab>(Tab.TYPE)
-  const [detailsValidated, setDetailsValidated] = useState(false)
+  const [tabState, setTabState] = useState<TabState>({
+    [Tab.TYPE]: "in-progress",
+    [Tab.PROMOTION]: "not-started",
+    [Tab.CAMPAIGN]: "not-started",
+  })
 
   const { t } = useTranslation()
   const { handleSuccess } = useRouteModal()
@@ -77,9 +84,9 @@ export const CreatePromotionForm = () => {
   const handleSubmit = form.handleSubmit(
     async (data) => {
       const {
-        campaign_choice,
+        campaign_choice: _campaignChoice,
         is_automatic,
-        template_id,
+        template_id: _templateId,
         application_method,
         rules,
         ...promotionData
@@ -151,7 +158,7 @@ export const CreatePromotionForm = () => {
       )
     },
     async (error) => {
-      const { campaign, ...rest } = error || {}
+      const { campaign: _campaign, ...rest } = error || {}
       const errorInPromotionTab = !!Object.keys(rest || {}).length
 
       if (errorInPromotionTab) {
@@ -160,39 +167,64 @@ export const CreatePromotionForm = () => {
     }
   )
 
-  const handleContinue = async () => {
+  const handleTabChange = async (tab: Tab) => {
     switch (tab) {
       case Tab.TYPE:
-        setTab(Tab.PROMOTION)
+        setTabState((prev) => ({
+          ...prev,
+          [Tab.TYPE]: "in-progress",
+        }))
+        setTab(tab)
         break
       case Tab.PROMOTION:
+        setTabState((prev) => ({
+          ...prev,
+          [Tab.TYPE]: "completed",
+          [Tab.PROMOTION]: "in-progress",
+        }))
+        setTab(tab)
+        break
+      case Tab.CAMPAIGN: {
         const valid = await form.trigger()
 
-        if (valid) {
-          setTab(Tab.CAMPAIGN)
-        } else {
-          // TODO: Set errors on the root level
+        if (!valid) {
+          // If the promotion tab is not valid, we want to set the tab state to in-progress
+          // and set the tab to the promotion tab
+          setTabState({
+            [Tab.TYPE]: "completed",
+            [Tab.PROMOTION]: "in-progress",
+            [Tab.CAMPAIGN]: "not-started",
+          })
+          setTab(Tab.PROMOTION)
+          break
         }
 
+        setTabState((prev) => ({
+          ...prev,
+          [Tab.PROMOTION]: "completed",
+          [Tab.CAMPAIGN]: "in-progress",
+        }))
+        setTab(tab)
         break
-      case Tab.CAMPAIGN:
-        break
+      }
     }
   }
 
-  const handleTabChange = (tab: Tab) => {
+  const handleContinue = async () => {
     switch (tab) {
       case Tab.TYPE:
-        setDetailsValidated(false)
-        setTab(tab)
+        handleTabChange(Tab.PROMOTION)
         break
-      case Tab.PROMOTION:
-        setDetailsValidated(false)
-        setTab(tab)
+      case Tab.PROMOTION: {
+        const valid = await form.trigger()
+
+        if (valid) {
+          handleTabChange(Tab.CAMPAIGN)
+        }
+
         break
+      }
       case Tab.CAMPAIGN:
-        setDetailsValidated(false)
-        setTab(tab)
         break
     }
   }
@@ -268,14 +300,6 @@ export const CreatePromotionForm = () => {
 
   const { campaigns } = useCampaigns(campaignQuery)
 
-  const detailsProgress = useMemo(() => {
-    if (detailsValidated) {
-      return "completed"
-    }
-
-    return "not-started"
-  }, [detailsValidated])
-
   const watchCampaignChoice = useWatch({
     control: form.control,
     name: "campaign_choice",
@@ -326,22 +350,20 @@ export const CreatePromotionForm = () => {
 
   return (
     <RouteFocusModal.Form form={form}>
-      <form
-        className="flex h-full flex-col overflow-scroll"
-        onSubmit={handleSubmit}
-      >
+      <form className="flex h-full flex-col" onSubmit={handleSubmit}>
         <ProgressTabs
           value={tab}
           onValueChange={(tab) => handleTabChange(tab as Tab)}
+          className="flex h-full flex-col overflow-hidden"
         >
           <RouteFocusModal.Header>
             <div className="flex w-full items-center justify-between gap-x-4">
-              <div className="-my-2 w-full max-w-[400px] border-l">
+              <div className="-my-2 w-full max-w-[600px] border-l">
                 <ProgressTabs.List className="grid w-full grid-cols-3">
                   <ProgressTabs.Trigger
                     className="w-full"
                     value={Tab.TYPE}
-                    status={detailsProgress}
+                    status={tabState[Tab.TYPE]}
                   >
                     {t("promotions.tabs.template")}
                   </ProgressTabs.Trigger>
@@ -349,436 +371,130 @@ export const CreatePromotionForm = () => {
                   <ProgressTabs.Trigger
                     className="w-full"
                     value={Tab.PROMOTION}
+                    status={tabState[Tab.PROMOTION]}
                   >
                     {t("promotions.tabs.details")}
                   </ProgressTabs.Trigger>
 
-                  <ProgressTabs.Trigger className="w-full" value={Tab.CAMPAIGN}>
+                  <ProgressTabs.Trigger
+                    className="w-full"
+                    value={Tab.CAMPAIGN}
+                    status={tabState[Tab.CAMPAIGN]}
+                  >
                     {t("promotions.tabs.campaign")}
                   </ProgressTabs.Trigger>
                 </ProgressTabs.List>
               </div>
-
-              <div className="flex items-center gap-x-2">
-                <RouteFocusModal.Close asChild>
-                  <Button variant="secondary" size="small">
-                    {t("actions.cancel")}
-                  </Button>
-                </RouteFocusModal.Close>
-
-                {tab === Tab.CAMPAIGN ? (
-                  <Button
-                    key="save-btn"
-                    type="submit"
-                    size="small"
-                    isLoading={false}
-                  >
-                    {t("actions.save")}
-                  </Button>
-                ) : (
-                  <Button
-                    key="continue-btn"
-                    type="button"
-                    onClick={handleContinue}
-                    size="small"
-                  >
-                    {t("actions.continue")}
-                  </Button>
-                )}
-              </div>
             </div>
           </RouteFocusModal.Header>
 
-          <RouteFocusModal.Body className="mx-auto my-20 w-[800px]">
-            <ProgressTabs.Content value={Tab.TYPE}>
-              <Form.Field
-                control={form.control}
-                name="template_id"
-                render={({ field }) => {
-                  return (
-                    <Form.Item>
-                      <Form.Label>{t("promotions.fields.type")}</Form.Label>
-
-                      <Form.Control>
-                        <RadioGroup
-                          key={"template_id"}
-                          className="flex-col gap-y-3"
-                          {...field}
-                          onValueChange={field.onChange}
-                        >
-                          {templates.map((template) => {
-                            return (
-                              <RadioGroup.ChoiceBox
-                                key={template.id}
-                                value={template.id}
-                                label={template.title}
-                                description={template.description}
-                              />
-                            )
-                          })}
-                        </RadioGroup>
-                      </Form.Control>
-                      <Form.ErrorMessage />
-                    </Form.Item>
-                  )
-                }}
-              />
-            </ProgressTabs.Content>
-
+          <RouteFocusModal.Body className="size-full overflow-hidden">
             <ProgressTabs.Content
-              value={Tab.PROMOTION}
-              className="flex flex-1 flex-col gap-8"
+              value={Tab.TYPE}
+              className="size-full overflow-y-auto"
             >
-              <Heading level="h1" className="text-fg-base">
-                {t(`promotions.sections.details`)}
-
-                {currentTemplate?.title && (
-                  <Badge
-                    className="ml-2 align-middle"
-                    color="grey"
-                    size="2xsmall"
-                    rounded="full"
-                  >
-                    {currentTemplate?.title}
-                  </Badge>
-                )}
-              </Heading>
-
-              {form.formState.errors.root && (
-                <Alert
-                  variant="error"
-                  dismissible={false}
-                  className="text-balance"
-                >
-                  {form.formState.errors.root.message}
-                </Alert>
-              )}
-
-              <Form.Field
-                control={form.control}
-                name="is_automatic"
-                render={({ field }) => {
-                  return (
-                    <Form.Item>
-                      <Form.Label>Method</Form.Label>
-
-                      <Form.Control>
-                        <RadioGroup
-                          className="flex gap-y-3"
-                          {...field}
-                          value={field.value}
-                          onValueChange={field.onChange}
-                        >
-                          <RadioGroup.ChoiceBox
-                            value={"false"}
-                            label={t("promotions.form.method.code.title")}
-                            description={t(
-                              "promotions.form.method.code.description"
-                            )}
-                            className={clx("basis-1/2")}
-                          />
-
-                          <RadioGroup.ChoiceBox
-                            value={"true"}
-                            label={t("promotions.form.method.automatic.title")}
-                            description={t(
-                              "promotions.form.method.automatic.description"
-                            )}
-                            className={clx("basis-1/2")}
-                          />
-                        </RadioGroup>
-                      </Form.Control>
-                      <Form.ErrorMessage />
-                    </Form.Item>
-                  )
-                }}
-              />
-
-              <div className="flex gap-y-4">
-                <Form.Field
-                  control={form.control}
-                  name="code"
-                  render={({ field }) => {
-                    return (
-                      <Form.Item className="basis-1/2">
-                        <Form.Label>
-                          {t("promotions.form.code.title")}
-                        </Form.Label>
-
-                        <Form.Control>
-                          <Input {...field} placeholder="SUMMER15" />
-                        </Form.Control>
-
-                        <Text
-                          size="small"
-                          leading="compact"
-                          className="text-ui-fg-subtle"
-                        >
-                          <Trans
-                            t={t}
-                            i18nKey="promotions.form.code.description"
-                            components={[<br key="break" />]}
-                          />
-                        </Text>
-                      </Form.Item>
-                    )
-                  }}
-                />
-              </div>
-
-              {!currentTemplate?.hiddenFields?.includes("type") && (
-                <Form.Field
-                  control={form.control}
-                  name="type"
-                  render={({ field }) => {
-                    return (
-                      <Form.Item>
-                        <Form.Label>{t("promotions.fields.type")}</Form.Label>
-                        <Form.Control>
-                          <RadioGroup
-                            className="flex gap-y-3"
-                            {...field}
-                            onValueChange={field.onChange}
-                          >
-                            <RadioGroup.ChoiceBox
-                              value={"standard"}
-                              label={t("promotions.form.type.standard.title")}
-                              description={t(
-                                "promotions.form.type.standard.description"
-                              )}
-                              className={clx("basis-1/2")}
-                            />
-
-                            <RadioGroup.ChoiceBox
-                              value={"buyget"}
-                              label={t("promotions.form.type.buyget.title")}
-                              description={t(
-                                "promotions.form.type.buyget.description"
-                              )}
-                              className={clx("basis-1/2")}
-                            />
-                          </RadioGroup>
-                        </Form.Control>
-                        <Form.ErrorMessage />
-                      </Form.Item>
-                    )
-                  }}
-                />
-              )}
-
-              <Divider />
-
-              <RulesFormField form={form} ruleType={"rules"} />
-
-              <Divider />
-
-              {!currentTemplate?.hiddenFields?.includes(
-                "application_method.type"
-              ) && (
-                <Form.Field
-                  control={form.control}
-                  name="application_method.type"
-                  render={({ field }) => {
-                    return (
-                      <Form.Item>
-                        <Form.Label>
-                          {t("promotions.fields.value_type")}
-                        </Form.Label>
-                        <Form.Control>
-                          <RadioGroup
-                            className="flex gap-y-3"
-                            {...field}
-                            onValueChange={field.onChange}
-                          >
-                            <RadioGroup.ChoiceBox
-                              value={"fixed"}
-                              label={t(
-                                "promotions.form.value_type.fixed.title"
-                              )}
-                              description={t(
-                                "promotions.form.value_type.fixed.description"
-                              )}
-                              className={clx("basis-1/2")}
-                            />
-
-                            <RadioGroup.ChoiceBox
-                              value={"percentage"}
-                              label={t(
-                                "promotions.form.value_type.percentage.title"
-                              )}
-                              description={t(
-                                "promotions.form.value_type.percentage.description"
-                              )}
-                              className={clx("basis-1/2")}
-                            />
-                          </RadioGroup>
-                        </Form.Control>
-                        <Form.ErrorMessage />
-                      </Form.Item>
-                    )
-                  }}
-                />
-              )}
-
-              <div className="flex gap-x-2 gap-y-4">
-                {!currentTemplate?.hiddenFields?.includes(
-                  "application_method.value"
-                ) && (
+              <div className="flex size-full flex-col items-center">
+                <div className="w-full max-w-[720px] py-16">
                   <Form.Field
                     control={form.control}
-                    name="application_method.value"
-                    render={({ field: { onChange, value, ...field } }) => {
-                      const currencyCode =
-                        form.getValues().application_method.currency_code
-
+                    name="template_id"
+                    render={({ field }) => {
                       return (
-                        <Form.Item className="basis-1/2">
-                          <Form.Label
-                            tooltip={
-                              currencyCode || !isFixedValueType
-                                ? undefined
-                                : t("promotions.fields.amount.tooltip")
-                            }
-                          >
-                            {t("promotions.form.value.title")}
-                          </Form.Label>
+                        <Form.Item>
+                          <Form.Label>{t("promotions.fields.type")}</Form.Label>
 
                           <Form.Control>
-                            {isFixedValueType ? (
-                              <CurrencyInput
-                                {...field}
-                                min={0}
-                                onValueChange={(value) => {
-                                  onChange(value ? parseInt(value) : "")
-                                }}
-                                code={currencyCode}
-                                symbol={
-                                  currencyCode
-                                    ? getCurrencySymbol(currencyCode)
-                                    : ""
-                                }
-                                value={value}
-                                disabled={!currencyCode}
-                              />
-                            ) : (
-                              <DeprecatedPercentageInput
-                                key="amount"
-                                className="text-right"
-                                min={0}
-                                max={100}
-                                {...field}
-                                value={value}
-                                onChange={(e) => {
-                                  onChange(
-                                    e.target.value === ""
-                                      ? null
-                                      : parseInt(e.target.value)
-                                  )
-                                }}
-                              />
-                            )}
+                            <RadioGroup
+                              key={"template_id"}
+                              className="flex-col gap-y-3"
+                              {...field}
+                              onValueChange={field.onChange}
+                            >
+                              {templates.map((template) => {
+                                return (
+                                  <RadioGroup.ChoiceBox
+                                    key={template.id}
+                                    value={template.id}
+                                    label={template.title}
+                                    description={template.description}
+                                  />
+                                )
+                              })}
+                            </RadioGroup>
                           </Form.Control>
-                          <Text
-                            size="small"
-                            leading="compact"
-                            className="text-ui-fg-subtle"
-                          >
-                            <Trans
-                              t={t}
-                              i18nKey={
-                                isFixedValueType
-                                  ? "promotions.form.value_type.fixed.description"
-                                  : "promotions.form.value_type.percentage.description"
-                              }
-                              components={[<br key="break" />]}
-                            />
-                          </Text>
                           <Form.ErrorMessage />
                         </Form.Item>
                       )
                     }}
                   />
-                )}
-
-                {isTypeStandard && watchAllocation === "each" && (
-                  <Form.Field
-                    control={form.control}
-                    name="application_method.max_quantity"
-                    render={({ field }) => {
-                      return (
-                        <Form.Item className="basis-1/2">
-                          <Form.Label>
-                            {t("promotions.form.max_quantity.title")}
-                          </Form.Label>
-
-                          <Form.Control>
-                            <Input
-                              {...form.register(
-                                "application_method.max_quantity",
-                                { valueAsNumber: true }
-                              )}
-                              type="number"
-                              min={1}
-                              placeholder="3"
-                            />
-                          </Form.Control>
-
-                          <Text
-                            size="small"
-                            leading="compact"
-                            className="text-ui-fg-subtle"
-                          >
-                            <Trans
-                              t={t}
-                              i18nKey="promotions.form.max_quantity.description"
-                              components={[<br key="break" />]}
-                            />
-                          </Text>
-                        </Form.Item>
-                      )
-                    }}
-                  />
-                )}
+                </div>
               </div>
+            </ProgressTabs.Content>
 
-              {isTypeStandard &&
-                !currentTemplate?.hiddenFields?.includes(
-                  "application_method.allocation"
-                ) && (
+            <ProgressTabs.Content
+              value={Tab.PROMOTION}
+              className="size-full overflow-y-auto"
+            >
+              <div className="flex size-full flex-col items-center">
+                <div className="flex w-full max-w-[720px] flex-col gap-y-8 py-16">
+                  <Heading level="h1" className="text-fg-base">
+                    {t(`promotions.sections.details`)}
+
+                    {currentTemplate?.title && (
+                      <Badge
+                        className="ml-2 align-middle"
+                        color="grey"
+                        size="2xsmall"
+                        rounded="full"
+                      >
+                        {currentTemplate?.title}
+                      </Badge>
+                    )}
+                  </Heading>
+
+                  {form.formState.errors.root && (
+                    <Alert
+                      variant="error"
+                      dismissible={false}
+                      className="text-balance"
+                    >
+                      {form.formState.errors.root.message}
+                    </Alert>
+                  )}
+
                   <Form.Field
                     control={form.control}
-                    name="application_method.allocation"
+                    name="is_automatic"
                     render={({ field }) => {
                       return (
                         <Form.Item>
                           <Form.Label>
-                            {t("promotions.fields.allocation")}
+                            {t("promotions.form.method.label")}
                           </Form.Label>
 
                           <Form.Control>
                             <RadioGroup
                               className="flex gap-y-3"
                               {...field}
+                              value={field.value}
                               onValueChange={field.onChange}
                             >
                               <RadioGroup.ChoiceBox
-                                value={"each"}
-                                label={t(
-                                  "promotions.form.allocation.each.title"
-                                )}
+                                value={"false"}
+                                label={t("promotions.form.method.code.title")}
                                 description={t(
-                                  "promotions.form.allocation.each.description"
+                                  "promotions.form.method.code.description"
                                 )}
                                 className={clx("basis-1/2")}
                               />
 
                               <RadioGroup.ChoiceBox
-                                value={"across"}
+                                value={"true"}
                                 label={t(
-                                  "promotions.form.allocation.across.title"
+                                  "promotions.form.method.automatic.title"
                                 )}
                                 description={t(
-                                  "promotions.form.allocation.across.description"
+                                  "promotions.form.method.automatic.description"
                                 )}
                                 className={clx("basis-1/2")}
                               />
@@ -789,41 +505,376 @@ export const CreatePromotionForm = () => {
                       )
                     }}
                   />
-                )}
 
-              {!isTypeStandard && (
-                <>
-                  <RulesFormField
-                    form={form}
-                    ruleType={"buy-rules"}
-                    scope="application_method.buy_rules"
-                  />
-                </>
-              )}
+                  <div className="flex gap-y-4">
+                    <Form.Field
+                      control={form.control}
+                      name="code"
+                      render={({ field }) => {
+                        return (
+                          <Form.Item className="basis-1/2">
+                            <Form.Label>
+                              {t("promotions.form.code.title")}
+                            </Form.Label>
 
-              {!isTargetTypeOrder && (
-                <>
+                            <Form.Control>
+                              <Input {...field} placeholder="SUMMER15" />
+                            </Form.Control>
+
+                            <Text
+                              size="small"
+                              leading="compact"
+                              className="text-ui-fg-subtle"
+                            >
+                              <Trans
+                                t={t}
+                                i18nKey="promotions.form.code.description"
+                                components={[<br key="break" />]}
+                              />
+                            </Text>
+                          </Form.Item>
+                        )
+                      }}
+                    />
+                  </div>
+
+                  {!currentTemplate?.hiddenFields?.includes("type") && (
+                    <Form.Field
+                      control={form.control}
+                      name="type"
+                      render={({ field }) => {
+                        return (
+                          <Form.Item>
+                            <Form.Label>
+                              {t("promotions.fields.type")}
+                            </Form.Label>
+                            <Form.Control>
+                              <RadioGroup
+                                className="flex gap-y-3"
+                                {...field}
+                                onValueChange={field.onChange}
+                              >
+                                <RadioGroup.ChoiceBox
+                                  value={"standard"}
+                                  label={t(
+                                    "promotions.form.type.standard.title"
+                                  )}
+                                  description={t(
+                                    "promotions.form.type.standard.description"
+                                  )}
+                                  className={clx("basis-1/2")}
+                                />
+
+                                <RadioGroup.ChoiceBox
+                                  value={"buyget"}
+                                  label={t("promotions.form.type.buyget.title")}
+                                  description={t(
+                                    "promotions.form.type.buyget.description"
+                                  )}
+                                  className={clx("basis-1/2")}
+                                />
+                              </RadioGroup>
+                            </Form.Control>
+                            <Form.ErrorMessage />
+                          </Form.Item>
+                        )
+                      }}
+                    />
+                  )}
+
                   <Divider />
-                  <RulesFormField
-                    form={form}
-                    ruleType={"target-rules"}
-                    scope="application_method.target_rules"
-                  />
-                </>
-              )}
+
+                  <RulesFormField form={form} ruleType={"rules"} />
+
+                  <Divider />
+
+                  {!currentTemplate?.hiddenFields?.includes(
+                    "application_method.type"
+                  ) && (
+                    <Form.Field
+                      control={form.control}
+                      name="application_method.type"
+                      render={({ field }) => {
+                        return (
+                          <Form.Item>
+                            <Form.Label>
+                              {t("promotions.fields.value_type")}
+                            </Form.Label>
+                            <Form.Control>
+                              <RadioGroup
+                                className="flex gap-y-3"
+                                {...field}
+                                onValueChange={field.onChange}
+                              >
+                                <RadioGroup.ChoiceBox
+                                  value={"fixed"}
+                                  label={t(
+                                    "promotions.form.value_type.fixed.title"
+                                  )}
+                                  description={t(
+                                    "promotions.form.value_type.fixed.description"
+                                  )}
+                                  className={clx("basis-1/2")}
+                                />
+
+                                <RadioGroup.ChoiceBox
+                                  value={"percentage"}
+                                  label={t(
+                                    "promotions.form.value_type.percentage.title"
+                                  )}
+                                  description={t(
+                                    "promotions.form.value_type.percentage.description"
+                                  )}
+                                  className={clx("basis-1/2")}
+                                />
+                              </RadioGroup>
+                            </Form.Control>
+                            <Form.ErrorMessage />
+                          </Form.Item>
+                        )
+                      }}
+                    />
+                  )}
+
+                  <div className="flex gap-x-2 gap-y-4">
+                    {!currentTemplate?.hiddenFields?.includes(
+                      "application_method.value"
+                    ) && (
+                      <Form.Field
+                        control={form.control}
+                        name="application_method.value"
+                        render={({ field: { onChange, value, ...field } }) => {
+                          const currencyCode =
+                            form.getValues().application_method.currency_code
+
+                          return (
+                            <Form.Item className="basis-1/2">
+                              <Form.Label
+                                tooltip={
+                                  currencyCode || !isFixedValueType
+                                    ? undefined
+                                    : t("promotions.fields.amount.tooltip")
+                                }
+                              >
+                                {t("promotions.form.value.title")}
+                              </Form.Label>
+
+                              <Form.Control>
+                                {isFixedValueType ? (
+                                  <CurrencyInput
+                                    {...field}
+                                    min={0}
+                                    onValueChange={(value) => {
+                                      onChange(value ? parseInt(value) : "")
+                                    }}
+                                    code={currencyCode || "USD"}
+                                    symbol={
+                                      currencyCode
+                                        ? getCurrencySymbol(currencyCode)
+                                        : "$"
+                                    }
+                                    value={value}
+                                    disabled={!currencyCode}
+                                  />
+                                ) : (
+                                  <DeprecatedPercentageInput
+                                    key="amount"
+                                    className="text-right"
+                                    min={0}
+                                    max={100}
+                                    {...field}
+                                    value={value}
+                                    onChange={(e) => {
+                                      onChange(
+                                        e.target.value === ""
+                                          ? null
+                                          : parseInt(e.target.value)
+                                      )
+                                    }}
+                                  />
+                                )}
+                              </Form.Control>
+                              <Text
+                                size="small"
+                                leading="compact"
+                                className="text-ui-fg-subtle"
+                              >
+                                <Trans
+                                  t={t}
+                                  i18nKey={
+                                    isFixedValueType
+                                      ? "promotions.form.value_type.fixed.description"
+                                      : "promotions.form.value_type.percentage.description"
+                                  }
+                                  components={[<br key="break" />]}
+                                />
+                              </Text>
+                              <Form.ErrorMessage />
+                            </Form.Item>
+                          )
+                        }}
+                      />
+                    )}
+
+                    {isTypeStandard && watchAllocation === "each" && (
+                      <Form.Field
+                        control={form.control}
+                        name="application_method.max_quantity"
+                        render={({ field }) => {
+                          return (
+                            <Form.Item className="basis-1/2">
+                              <Form.Label>
+                                {t("promotions.form.max_quantity.title")}
+                              </Form.Label>
+
+                              <Form.Control>
+                                <Input
+                                  {...form.register(
+                                    "application_method.max_quantity",
+                                    { valueAsNumber: true }
+                                  )}
+                                  type="number"
+                                  min={1}
+                                  placeholder="3"
+                                />
+                              </Form.Control>
+
+                              <Text
+                                size="small"
+                                leading="compact"
+                                className="text-ui-fg-subtle"
+                              >
+                                <Trans
+                                  t={t}
+                                  i18nKey="promotions.form.max_quantity.description"
+                                  components={[<br key="break" />]}
+                                />
+                              </Text>
+                            </Form.Item>
+                          )
+                        }}
+                      />
+                    )}
+                  </div>
+
+                  {isTypeStandard &&
+                    !currentTemplate?.hiddenFields?.includes(
+                      "application_method.allocation"
+                    ) && (
+                      <Form.Field
+                        control={form.control}
+                        name="application_method.allocation"
+                        render={({ field }) => {
+                          return (
+                            <Form.Item>
+                              <Form.Label>
+                                {t("promotions.fields.allocation")}
+                              </Form.Label>
+
+                              <Form.Control>
+                                <RadioGroup
+                                  className="flex gap-y-3"
+                                  {...field}
+                                  onValueChange={field.onChange}
+                                >
+                                  <RadioGroup.ChoiceBox
+                                    value={"each"}
+                                    label={t(
+                                      "promotions.form.allocation.each.title"
+                                    )}
+                                    description={t(
+                                      "promotions.form.allocation.each.description"
+                                    )}
+                                    className={clx("basis-1/2")}
+                                  />
+
+                                  <RadioGroup.ChoiceBox
+                                    value={"across"}
+                                    label={t(
+                                      "promotions.form.allocation.across.title"
+                                    )}
+                                    description={t(
+                                      "promotions.form.allocation.across.description"
+                                    )}
+                                    className={clx("basis-1/2")}
+                                  />
+                                </RadioGroup>
+                              </Form.Control>
+                              <Form.ErrorMessage />
+                            </Form.Item>
+                          )
+                        }}
+                      />
+                    )}
+
+                  {!isTypeStandard && (
+                    <>
+                      <RulesFormField
+                        form={form}
+                        ruleType={"buy-rules"}
+                        scope="application_method.buy_rules"
+                      />
+                    </>
+                  )}
+
+                  {!isTargetTypeOrder && (
+                    <>
+                      <Divider />
+                      <RulesFormField
+                        form={form}
+                        ruleType={"target-rules"}
+                        scope="application_method.target_rules"
+                      />
+                    </>
+                  )}
+                </div>
+              </div>
             </ProgressTabs.Content>
 
             <ProgressTabs.Content
               value={Tab.CAMPAIGN}
-              className="flex flex-col items-center"
+              className="size-full overflow-auto"
             >
-              <AddCampaignPromotionFields
-                form={form}
-                campaigns={campaigns || []}
-              />
+              <div className="flex flex-col items-center">
+                <div className="flex w-full max-w-[720px] flex-col gap-y-8 py-16">
+                  <AddCampaignPromotionFields
+                    form={form}
+                    campaigns={campaigns || []}
+                  />
+                </div>
+              </div>
             </ProgressTabs.Content>
           </RouteFocusModal.Body>
         </ProgressTabs>
+        <RouteFocusModal.Footer>
+          <div className="flex items-center justify-end gap-x-2">
+            <RouteFocusModal.Close asChild>
+              <Button variant="secondary" size="small">
+                {t("actions.cancel")}
+              </Button>
+            </RouteFocusModal.Close>
+
+            {tab === Tab.CAMPAIGN ? (
+              <Button
+                key="save-btn"
+                type="submit"
+                size="small"
+                isLoading={false}
+              >
+                {t("actions.save")}
+              </Button>
+            ) : (
+              <Button
+                key="continue-btn"
+                type="button"
+                onClick={handleContinue}
+                size="small"
+              >
+                {t("actions.continue")}
+              </Button>
+            )}
+          </div>
+        </RouteFocusModal.Footer>
       </form>
     </RouteFocusModal.Form>
   )

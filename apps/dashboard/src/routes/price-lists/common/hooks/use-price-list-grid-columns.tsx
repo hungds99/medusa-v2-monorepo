@@ -1,16 +1,20 @@
-import { HttpTypes, StoreCurrencyDTO } from "@medusajs/types"
+import { HttpTypes } from "@medusajs/types"
 import { ColumnDef } from "@tanstack/react-table"
 import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
 
 import { Thumbnail } from "../../../../components/common/thumbnail"
-import { DataGridReadOnlyCell } from "../../../../components/data-grid/data-grid-cells/data-grid-readonly-cell"
-import { createDataGridHelper } from "../../../../components/data-grid/utils"
+import {
+  createDataGridHelper,
+  DataGrid,
+} from "../../../../components/data-grid"
+import { createDataGridPriceColumns } from "../../../../components/data-grid/helpers/create-data-grid-price-columns"
+import { PricingCreateSchemaType } from "../../price-list-create/components/price-list-create-form/schema"
 import { isProductRow } from "../utils"
-import { getPriceColumns } from "../../../../components/data-grid/data-grid-columns/price-columns"
 
 const columnHelper = createDataGridHelper<
-  HttpTypes.AdminProduct | HttpTypes.AdminProductVariant
+  HttpTypes.AdminProduct | HttpTypes.AdminProductVariant,
+  PricingCreateSchemaType
 >()
 
 export const usePriceListGridColumns = ({
@@ -18,7 +22,7 @@ export const usePriceListGridColumns = ({
   regions = [],
   pricePreferences = [],
 }: {
-  currencies?: StoreCurrencyDTO[]
+  currencies?: HttpTypes.AdminStoreCurrency[]
   regions?: HttpTypes.AdminRegion[]
   pricePreferences?: HttpTypes.AdminPricePreference[]
 }) => {
@@ -31,31 +35,33 @@ export const usePriceListGridColumns = ({
       columnHelper.column({
         id: t("fields.title"),
         header: t("fields.title"),
-        cell: ({ row }) => {
-          const entity = row.original
-
+        cell: (context) => {
+          const entity = context.row.original
           if (isProductRow(entity)) {
             return (
-              <DataGridReadOnlyCell>
+              <DataGrid.ReadonlyCell context={context}>
                 <div className="flex h-full w-full items-center gap-x-2 overflow-hidden">
                   <Thumbnail src={entity.thumbnail} />
                   <span className="truncate">{entity.title}</span>
                 </div>
-              </DataGridReadOnlyCell>
+              </DataGrid.ReadonlyCell>
             )
           }
 
           return (
-            <DataGridReadOnlyCell>
+            <DataGrid.ReadonlyCell context={context}>
               <div className="flex h-full w-full items-center gap-x-2 overflow-hidden">
                 <span className="truncate">{entity.title}</span>
               </div>
-            </DataGridReadOnlyCell>
+            </DataGrid.ReadonlyCell>
           )
         },
         disableHiding: true,
       }),
-      ...getPriceColumns({
+      ...createDataGridPriceColumns<
+        HttpTypes.AdminProduct | HttpTypes.AdminProductVariant,
+        PricingCreateSchemaType
+      >({
         currencies: currencies.map((c) => c.currency_code),
         regions,
         pricePreferences,
@@ -64,10 +70,16 @@ export const usePriceListGridColumns = ({
           return isProductRow(entity)
         },
         getFieldName: (context, value) => {
-          const entity = context.row.original as any
-          if (context.column.id.startsWith("currency_prices")) {
+          const entity = context.row.original
+
+          if (isProductRow(entity)) {
+            return null
+          }
+
+          if (context.column.id?.startsWith("currency_prices")) {
             return `products.${entity.product_id}.variants.${entity.id}.currency_prices.${value}.amount`
           }
+
           return `products.${entity.product_id}.variants.${entity.id}.region_prices.${value}.amount`
         },
         t,

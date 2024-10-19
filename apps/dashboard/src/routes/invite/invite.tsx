@@ -1,18 +1,18 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Alert, Button, Heading, Input, Text, toast } from "@medusajs/ui"
+import { Alert, Button, Heading, Hint, Input, Text, toast } from "@medusajs/ui"
 import { AnimatePresence, motion } from "framer-motion"
 import i18n from "i18next"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
-import { Trans, useTranslation } from "react-i18next"
+import { useTranslation } from "react-i18next"
 import { decodeToken } from "react-jwt"
 import { Link, useSearchParams } from "react-router-dom"
 import * as z from "zod"
 import { Form } from "../../components/common/form"
-import { LogoBox } from "../../components/common/logo-box"
-import { useCreateAuthUser } from "../../hooks/api/auth"
+import { useSignUpWithEmailPass } from "../../hooks/api/auth"
 import { useAcceptInvite } from "../../hooks/api/invites"
 import { isFetchError } from "../../lib/is-fetch-error"
+import AvatarBox from "../../components/common/logo-box/avatar-box"
 
 const CreateAccountSchema = z
   .object({
@@ -38,6 +38,7 @@ type DecodedInvite = {
   jti: any
   exp: string
   iat: number
+  email: string
 }
 
 export const Invite = () => {
@@ -49,23 +50,9 @@ export const Invite = () => {
   const isValidInvite = invite && validateDecodedInvite(invite)
 
   return (
-    <div className="bg-ui-bg-base relative flex min-h-dvh w-dvw items-center justify-center p-4">
-      <div className="flex w-full max-w-[300px] flex-col items-center">
-        <LogoBox
-          className="mb-4"
-          checked={success}
-          containerTransition={{
-            duration: 1.2,
-            delay: 0.8,
-            ease: [0, 0.71, 0.2, 1.01],
-          }}
-          pathTransition={{
-            duration: 1.3,
-            delay: 1.1,
-            bounce: 0.6,
-            ease: [0.1, 0.8, 0.2, 1.01],
-          }}
-        />
+    <div className="bg-ui-bg-subtle relative flex min-h-dvh w-dvw items-center justify-center p-4">
+      <div className="flex w-full max-w-[280px] flex-col items-center">
+        <AvatarBox checked={success} />
         <div className="max-h-[557px] w-full will-change-contents">
           {isValidInvite ? (
             <AnimatePresence>
@@ -149,19 +136,13 @@ const LoginLink = () => {
   return (
     <div className="flex w-full flex-col items-center">
       <div className="my-6 h-px w-full border-b border-dotted" />
-      <span className="text-ui-fg-subtle txt-small">
-        <Trans
-          t={t}
-          i18nKey="invite.alreadyHaveAccount"
-          components={[
-            <Link
-              key="login-link"
-              to="/login"
-              className="text-ui-fg-interactive transition-fg hover:text-ui-fg-interactive-hover focus-visible:text-ui-fg-interactive-hover outline-none"
-            />,
-          ]}
-        />
-      </span>
+      <Link
+        key="login-link"
+        to="/login"
+        className="text-ui-fg-interactive txt-small !text-ui-fg-base font-medium transition-fg hover:text-ui-fg-interactive-hover focus-visible:text-ui-fg-interactive-hover outline-none"
+      >
+        {t("invite.backToLogin")}
+      </Link>
     </div>
   )
 }
@@ -185,6 +166,7 @@ const InvalidView = () => {
 const CreateView = ({
   onSuccess,
   token,
+  invite,
 }: {
   onSuccess: () => void
   token: string
@@ -193,10 +175,13 @@ const CreateView = ({
   const { t } = useTranslation()
   const [invalid, setInvalid] = useState(false)
 
+  const [params] = useSearchParams()
+  const isFirstRun = params.get("first_run") === "true" // true when the invite page is open during a "create medusa app" run
+
   const form = useForm<z.infer<typeof CreateAccountSchema>>({
     resolver: zodResolver(CreateAccountSchema),
     defaultValues: {
-      email: "",
+      email: isFirstRun ? "" : invite.email || "",
       first_name: "",
       last_name: "",
       password: "",
@@ -204,15 +189,15 @@ const CreateView = ({
     },
   })
 
-  const { mutateAsync: createAuthUser, isPending: isCreatingAuthUser } =
-    useCreateAuthUser()
+  const { mutateAsync: signUpEmailPass, isPending: isCreatingAuthUser } =
+    useSignUpWithEmailPass()
 
   const { mutateAsync: acceptInvite, isPending: isAcceptingInvite } =
     useAcceptInvite(token)
 
   const handleSubmit = form.handleSubmit(async (data) => {
     try {
-      const { token: authToken } = await createAuthUser({
+      const authToken = await signUpEmailPass({
         email: data.email,
         password: data.password,
       })
@@ -248,6 +233,14 @@ const CreateView = ({
     }
   })
 
+  const serverError = form.formState.errors.root?.message
+  const validationError =
+    form.formState.errors.email?.message ||
+    form.formState.errors.password?.message ||
+    form.formState.errors.repeat_password?.message ||
+    form.formState.errors.first_name?.message ||
+    form.formState.errors.last_name?.message
+
   return (
     <div className="flex w-full flex-col items-center">
       <div className="mb-4 flex flex-col items-center">
@@ -258,18 +251,21 @@ const CreateView = ({
       </div>
       <Form {...form}>
         <form onSubmit={handleSubmit} className="flex w-full flex-col gap-y-6">
-          <div className="flex flex-col gap-y-4">
+          <div className="flex flex-col gap-y-2">
             <Form.Field
               control={form.control}
               name="email"
               render={({ field }) => {
                 return (
                   <Form.Item>
-                    <Form.Label>{t("fields.email")}</Form.Label>
                     <Form.Control>
-                      <Input autoComplete="off" {...field} />
+                      <Input
+                        autoComplete="off"
+                        {...field}
+                        className="bg-ui-bg-field-component"
+                        placeholder={t("fields.email")}
+                      />
                     </Form.Control>
-                    <Form.ErrorMessage />
                   </Form.Item>
                 )
               }}
@@ -280,11 +276,14 @@ const CreateView = ({
               render={({ field }) => {
                 return (
                   <Form.Item>
-                    <Form.Label>{t("fields.firstName")}</Form.Label>
                     <Form.Control>
-                      <Input autoComplete="given-name" {...field} />
+                      <Input
+                        autoComplete="given-name"
+                        {...field}
+                        className="bg-ui-bg-field-component"
+                        placeholder={t("fields.firstName")}
+                      />
                     </Form.Control>
-                    <Form.ErrorMessage />
                   </Form.Item>
                 )
               }}
@@ -295,11 +294,14 @@ const CreateView = ({
               render={({ field }) => {
                 return (
                   <Form.Item>
-                    <Form.Label>{t("fields.lastName")}</Form.Label>
                     <Form.Control>
-                      <Input autoComplete="family-name" {...field} />
+                      <Input
+                        autoComplete="family-name"
+                        {...field}
+                        className="bg-ui-bg-field-component"
+                        placeholder={t("fields.lastName")}
+                      />
                     </Form.Control>
-                    <Form.ErrorMessage />
                   </Form.Item>
                 )
               }}
@@ -310,15 +312,15 @@ const CreateView = ({
               render={({ field }) => {
                 return (
                   <Form.Item>
-                    <Form.Label>{t("fields.password")}</Form.Label>
                     <Form.Control>
                       <Input
                         autoComplete="new-password"
                         type="password"
                         {...field}
+                        className="bg-ui-bg-field-component"
+                        placeholder={t("fields.password")}
                       />
                     </Form.Control>
-                    <Form.ErrorMessage />
                   </Form.Item>
                 )
               }}
@@ -329,22 +331,33 @@ const CreateView = ({
               render={({ field }) => {
                 return (
                   <Form.Item>
-                    <Form.Label>{t("fields.repeatPassword")}</Form.Label>
                     <Form.Control>
-                      <Input autoComplete="off" type="password" {...field} />
+                      <Input
+                        autoComplete="off"
+                        type="password"
+                        {...field}
+                        className="bg-ui-bg-field-component"
+                        placeholder={t("fields.repeatPassword")}
+                      />
                     </Form.Control>
-                    <Form.ErrorMessage />
                   </Form.Item>
                 )
               }}
             />
-            {form.formState.errors.root && (
+            {validationError && (
+              <div className="text-center mt-6">
+                <Hint className="inline-flex" variant={"error"}>
+                  {validationError}
+                </Hint>
+              </div>
+            )}
+            {serverError && (
               <Alert
+                className="p-2 bg-ui-bg-base items-center"
+                dismissible
                 variant="error"
-                dismissible={false}
-                className="text-balance"
               >
-                {form.formState.errors.root.message}
+                {serverError}
               </Alert>
             )}
           </div>
@@ -379,6 +392,14 @@ const SuccessView = () => {
           {t("invite.successAction")}
         </Link>
       </Button>
+
+      <Link
+        key="login-link"
+        to="/login"
+        className="text-ui-fg-interactive txt-small !text-ui-fg-base transition-fg hover:text-ui-fg-interactive-hover focus-visible:text-ui-fg-interactive-hover mt-3 font-medium outline-none"
+      >
+        {t("invite.backToLogin")}
+      </Link>
     </div>
   )
 }

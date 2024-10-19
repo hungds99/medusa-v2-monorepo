@@ -1,4 +1,4 @@
-import { DeleteResponse, HttpTypes, PaginatedResponse } from "@medusajs/types"
+import { HttpTypes, PaginatedResponse } from "@medusajs/types"
 import {
   QueryKey,
   UseMutationOptions,
@@ -10,6 +10,7 @@ import { sdk } from "../../lib/client"
 import { queryClient } from "../../lib/query-client"
 import { queryKeysFactory } from "../../lib/query-key-factory"
 import { pricePreferencesQueryKeys } from "./price-preferences"
+import { FetchError } from "@medusajs/js-sdk"
 
 const REGIONS_QUERY_KEY = "regions" as const
 export const regionsQueryKeys = queryKeysFactory(REGIONS_QUERY_KEY)
@@ -20,7 +21,7 @@ export const useRegion = (
   options?: Omit<
     UseQueryOptions<
       { region: HttpTypes.AdminRegion },
-      Error,
+      FetchError,
       { region: HttpTypes.AdminRegion },
       QueryKey
     >,
@@ -28,7 +29,7 @@ export const useRegion = (
   >
 ) => {
   const { data, ...rest } = useQuery({
-    queryKey: regionsQueryKeys.detail(id),
+    queryKey: regionsQueryKeys.detail(id, query),
     queryFn: async () => sdk.admin.region.retrieve(id, query),
     ...options,
   })
@@ -41,7 +42,7 @@ export const useRegions = (
   options?: Omit<
     UseQueryOptions<
       PaginatedResponse<{ regions: HttpTypes.AdminRegion[] }>,
-      Error,
+      FetchError,
       PaginatedResponse<{ regions: HttpTypes.AdminRegion[] }>,
       QueryKey
     >,
@@ -60,7 +61,7 @@ export const useRegions = (
 export const useCreateRegion = (
   options?: UseMutationOptions<
     { region: HttpTypes.AdminRegion },
-    Error,
+    FetchError,
     HttpTypes.AdminCreateRegion
   >
 ) => {
@@ -86,7 +87,7 @@ export const useUpdateRegion = (
   id: string,
   options?: UseMutationOptions<
     { region: HttpTypes.AdminRegion },
-    Error,
+    FetchError,
     HttpTypes.AdminUpdateRegion
   >
 ) => {
@@ -94,7 +95,7 @@ export const useUpdateRegion = (
     mutationFn: (payload) => sdk.admin.region.update(id, payload),
     onSuccess: (data, variables, context) => {
       queryClient.invalidateQueries({ queryKey: regionsQueryKeys.lists() })
-      queryClient.invalidateQueries({ queryKey: regionsQueryKeys.detail(id) })
+      queryClient.invalidateQueries({ queryKey: regionsQueryKeys.details() })
 
       queryClient.invalidateQueries({
         queryKey: pricePreferencesQueryKeys.list(),
@@ -111,7 +112,11 @@ export const useUpdateRegion = (
 
 export const useDeleteRegion = (
   id: string,
-  options?: UseMutationOptions<DeleteResponse<"region">, Error, void>
+  options?: UseMutationOptions<
+    HttpTypes.AdminRegionDeleteResponse,
+    FetchError,
+    void
+  >
 ) => {
   return useMutation({
     mutationFn: () => sdk.admin.region.delete(id),

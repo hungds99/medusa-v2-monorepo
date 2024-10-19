@@ -29,6 +29,10 @@
     "expired": "Expired",
     "active": "Active",
     "revoked": "Revoked",
+    "new": "New",
+    "modified": "Modified",
+    "added": "Added",
+    "removed": "Removed",
     "admin": "Admin",
     "store": "Store",
     "details": "Details",
@@ -50,7 +54,8 @@
     "unsavedChangesTitle": "Are you sure you want to leave this form?",
     "unsavedChangesDescription": "You have unsaved changes that will be lost if you exit this form.",
     "includesTaxTooltip": "Prices in this column are tax inclusive.",
-    "excludesTaxTooltip": "Prices in this column are tax exclusive."
+    "excludesTaxTooltip": "Prices in this column are tax exclusive.",
+    "noMoreData": "No more data"
   },
   "json": {
     "header": "JSON",
@@ -93,31 +98,42 @@
   "actions": {
     "save": "Save",
     "saveAsDraft": "Save as draft",
+    "duplicate": "Duplicate",
     "publish": "Publish",
     "create": "Create",
     "delete": "Delete",
     "remove": "Remove",
     "revoke": "Revoke",
     "cancel": "Cancel",
+    "forceConfirm": "Force confirm",
+    "continueEdit": "Continue edit",
     "enable": "Enable",
     "disable": "Disable",
+    "undo": "Undo",
     "complete": "Complete",
     "viewDetails": "View details",
     "back": "Back",
     "close": "Close",
     "showMore": "Show more",
     "continue": "Continue",
+    "continueWithEmail": "Continue with Email",
+    "addReason": "Add Reason",
+    "addNote": "Add Note",
     "reset": "Reset",
     "confirm": "Confirm",
     "edit": "Edit",
+    "addItems": "Add items",
     "download": "Download",
+    "clear": "Clear",
     "clearAll": "Clear all",
     "apply": "Apply",
     "add": "Add",
     "select": "Select",
     "browse": "Browse",
     "logout": "Logout",
-    "hide": "Hide"
+    "hide": "Hide",
+    "export": "Export",
+    "import": "Import"
   },
   "operators": {
     "in": "In"
@@ -125,10 +141,46 @@
   "app": {
     "search": {
       "label": "Search",
+      "title": "Search",
+      "description": "Search your entire store, including orders, products, customers, and more.",
       "allAreas": "All areas",
       "navigation": "Navigation",
       "openResult": "Open result",
-      "placeholder": "Jump to or find anything..."
+      "showMore": "Show more",
+      "placeholder": "Jump to or find anything...",
+      "noResultsTitle": "No results found",
+      "noResultsMessage": "We couldn't find anything that matched your search.",
+      "emptySearchTitle": "Type to search",
+      "emptySearchMessage": "Enter a keyword or phrase to explore.",
+      "loadMore": "Load {{count}} more",
+      "groups": {
+        "all": "All areas",
+        "customer": "Customers",
+        "customerGroup": "Customer Groups",
+        "product": "Products",
+        "productVariant": "Product Variants",
+        "inventory": "Inventory",
+        "reservation": "Reservations",
+        "category": "Categories",
+        "collection": "Collections",
+        "order": "Orders",
+        "promotion": "Promotions",
+        "campaign": "Campaigns",
+        "priceList": "Price Lists",
+        "user": "Users",
+        "region": "Regions",
+        "taxRegion": "Tax Regions",
+        "returnReason": "Return Reasons",
+        "salesChannel": "Sales Channels",
+        "productType": "Product Types",
+        "productTag": "Product Tags",
+        "location": "Locations",
+        "shippingProfile": "Shipping Profiles",
+        "publishableApiKey": "Publishable API Keys",
+        "secretApiKey": "Secret API Keys",
+        "command": "Commands",
+        "navigation": "Navigation"
+      }
     },
     "keyboardShortcuts": {
       "pageShortcut": "Jump to",
@@ -160,7 +212,8 @@
         "goToPublishableApiKeys": "Publishable API Keys",
         "goToSecretApiKeys": "Secret API Keys",
         "goToWorkflows": "Workflows",
-        "goToProfile": "Profile"
+        "goToProfile": "Profile",
+        "goToReturnReasons": "Return reasons"
       }
     },
     "menus": {
@@ -204,6 +257,42 @@
       }
     }
   },
+  "dataGrid": {
+    "columns": {
+      "view": "View",
+      "resetToDefault": "Reset to default",
+      "disabled": "Changing which columns are visible is disabled."
+    },
+    "shortcuts": {
+      "label": "Shortcuts",
+      "commands": {
+        "undo": "Undo",
+        "redo": "Redo",
+        "copy": "Copy",
+        "paste": "Paste",
+        "edit": "Edit",
+        "delete": "Delete",
+        "clear": "Clear",
+        "moveUp": "Move up",
+        "moveDown": "Move down",
+        "moveLeft": "Move left",
+        "moveRight": "Move right",
+        "moveTop": "Move to top",
+        "moveBottom": "Move to bottom",
+        "selectDown": "Select down",
+        "selectUp": "Select up",
+        "selectColumnDown": "Select column down",
+        "selectColumnUp": "Select column up",
+        "focusToolbar": "Focus toolbar",
+        "focusCancel": "Focus cancel"
+      }
+    },
+    "errors": {
+      "fixError": "Fix error",
+      "count_one": "{{count}} error",
+      "count_other": "{{count}} errors"
+    }
+  },
   "filters": {
     "date": {
       "today": "Today",
@@ -227,14 +316,16 @@
     "addFilter": "Add filter"
   },
   "errorBoundary": {
-    "badRequestTitle": "Bad request",
-    "badRequestMessage": "The request was invalid.",
-    "notFoundTitle": "Not found",
-    "notFoundMessage": "The page you are looking for does not exist.",
-    "internalServerErrorTitle": "Internal server error",
-    "internalServerErrorMessage": "An error occurred on the server.",
+    "badRequestTitle": "400 - Bad request",
+    "badRequestMessage": "The request could not be understood by the server due to malformed syntax.",
+    "notFoundTitle": "404 - There is no page at this address",
+    "notFoundMessage": "Check the URL and try again, or use the search bar to find what you are looking for.",
+    "internalServerErrorTitle": "500 - Internal server error",
+    "internalServerErrorMessage": "An unexpected error occurred on the server. Please try again later.",
     "defaultTitle": "An error occurred",
-    "defaultMessage": "An error occurred while rendering this page."
+    "defaultMessage": "An unexpected error occurred while rendering this page.",
+    "noMatchMessage": "The page you are looking for does not exist.",
+    "backToDashboard": "Back to dashboard"
   },
   "addresses": {
     "shippingAddress": {
@@ -296,7 +387,8 @@
       },
       "errors": {
         "variants": "Please select at least one variant.",
-        "options": "Please create at least one option."
+        "options": "Please create at least one option.",
+        "uniqueSku": "SKU must be unique."
       },
       "inventory": {
         "heading": "Inventory kits",
@@ -317,7 +409,8 @@
         "productVariants": {
           "label": "Product variants",
           "hint": "This ranking will affect the variants' order in your storefront.",
-          "alert": "Add options to create variants."
+          "alert": "Add options to create variants.",
+          "tip": "Variants left unchecked won't be created. You can always create and edit variants afterwards but this list fits the variations in your product options."
         },
         "productOptions": {
           "label": "Product options",
@@ -325,6 +418,43 @@
         }
       },
       "successToast": "Product {{title}} was successfully created."
+    },
+    "export": {
+      "header": "Export Product List",
+      "description": "Export the product list to a CSV file.",
+      "success": {
+        "title": "We are processing your export",
+        "description": "Exporting data may take a few minutes. We will notify you when we are done."
+      },
+      "filters": {
+        "title": "Filters",
+        "description": "Apply filters in the table overview to adjust this view"
+      },
+      "columns": {
+        "title": "Columns",
+        "description": "Customize the exported data to meet specific needs"
+      }
+    },
+    "import": {
+      "header": "Import Product List",
+      "uploadLabel": "Import Products",
+      "uploadHint": "Drag and drop a CSV file or click to upload",
+      "description": "Import products by providing a CSV file in a pre-defined format",
+      "template": {
+        "title": "Unsure about how to arrange your list?",
+        "description": "Download the template below to ensure you are following the correct format."
+      },
+      "upload": {
+        "title": "Upload a CSV file",
+        "description": "Through imports you can add or update products. To update existing products you must use the existing handle and ID, to update existing variants you must use the existing ID. You will be asked for confirmation before we import products.",
+        "preprocessing": "Preprocessing...",
+        "productsToCreate": "Products will be created",
+        "productsToUpdate": "Products will be updated"
+      },
+      "success": {
+        "title": "We are processing your import",
+        "description": "Importing data may take a while. We will notify you when we are done."
+      }
     },
     "deleteWarning": "You are about to delete the product {{title}}. This action cannot be undone.",
     "variants": "Variants",
@@ -336,6 +466,7 @@
     "media": {
       "label": "Media",
       "editHint": "Add media to the product to showcase it in your storefront.",
+      "makeThumbnail": "Make thumbnail",
       "uploadImagesLabel": "Upload images",
       "uploadImagesHint": "Drag and drop images here or click to upload.",
       "invalidFileType": "'{{name}}' is not a supported file type. Supported file types are: {{types}}.",
@@ -441,11 +572,13 @@
     },
     "variant": {
       "edit": {
-        "header": "Edit Variant"
+        "header": "Edit Variant",
+        "success": "Product variant edited sucessfully"
       },
       "create": {
-        "header": "Create Variant"
+        "header": "Variant details"
       },
+      "deleteWarning": "Are you sure you want to delete this variant?",
       "pricesPagination": "1 - {{current}} of {{total}} prices",
       "tableItemAvailable": "{{availableCount}} available",
       "tableItem_one": "{{availableCount}} available at {{locationCount}} location",
@@ -453,12 +586,15 @@
       "inventory": {
         "notManaged": "Not managed",
         "manageItems": "Manage inventory items",
+        "notManagedDesc": "Inventory is not managed for this variant. Turn on ‘Manage Inventory’ to track the variant's inventory.",
         "manageKit": "Manage inventory kit",
         "navigateToItem": "Go to inventory item",
         "actions": {
           "inventoryItems": "Go to inventory item",
           "inventoryKit": "Show inventory items"
         },
+        "inventoryKit": "Inventory Kit",
+        "inventoryKitHint": "Does this variant consist of several inventory items?",
         "validation": {
           "itemId": "Please select inventory item.",
           "quantity": "Quantity is required. Please input a positive number."
@@ -486,7 +622,8 @@
       "create": {
         "header": "Create Option",
         "successToast": "Option {{title}} was successfully created."
-      }
+      },
+      "deleteWarning": "You are about to delete the product option: {{title}}. This action cannot be undone."
     },
     "organization": {
       "header": "Organize",
@@ -514,6 +651,7 @@
     "subtitle": "Organize products into collections.",
     "createCollection": "Create Collection",
     "createCollectionHint": "Create a new collection to organize your products.",
+    "createSuccess": "Collection created successfully.",
     "editCollection": "Edit Collection",
     "handleTooltip": "The handle is used to reference the collection in your storefront. If not specified, the handle will be generated from the collection title.",
     "deleteWarning": "You are about to delete the collection {{title}}. This action cannot be undone.",
@@ -609,13 +747,14 @@
     "deleteWarning": "You are about to delete an inventory item. This action cannot be undone.",
     "editItemDetails": "Edit item details",
     "create": {
-      "title": "Add inventory item",
+      "title": "Create Inventory Item",
       "details": "Details",
       "availability": "Availability",
       "locations": "Locations",
       "attributes": "Attributes",
       "requiresShipping": "Requires shipping",
-      "requiresShippingHint": "Does the inventory item require shipping?"
+      "requiresShippingHint": "Does the inventory item require shipping?",
+      "successToast": "Inventory item was successfully created."
     },
     "reservation": {
       "header": "Reservation of {{itemName}}",
@@ -634,7 +773,11 @@
       "descriptionPlaceholder": "What type of reservation is this?",
       "successToast": "Reservation was successfully created.",
       "updateSuccessToast": "Reservation was successfully updated.",
-      "deleteSuccessToast": "Reservation was successfully deleted."
+      "deleteSuccessToast": "Reservation was successfully deleted.",
+      "errors": {
+        "noAvaliableQuantity": "Stock location doesn't have available quantity.",
+        "quantityOutOfRange": "Minimum quantity is 1 and maximum quantity is {{max}}"
+      }
     },
     "toast": {
       "updateLocations": "Locations updated successfully.",
@@ -679,6 +822,7 @@
         "noRecordsMessage": "This customer doesn't belong to any group."
       },
       "add": {
+        "success": "Customer added to: {{groups}}.",
         "list": {
           "noRecordsMessage": "Please create a customer group first."
         }
@@ -741,6 +885,9 @@
   },
   "orders": {
     "domain": "Orders",
+    "claim": "Claim",
+    "exchange": "Exchange",
+    "return": "Return",
     "cancelWarning": "You are about to cancel the order {{id}}. This action cannot be undone.",
     "onDateFromSalesChannel": "{{date}} from {{salesChannel}}",
     "list": {
@@ -749,14 +896,17 @@
     "summary": {
       "requestReturn": "Request return",
       "allocateItems": "Allocate items",
-      "editItems": "Edit items"
+      "editOrder": "Edit order",
+      "editOrderContinue": "Continue order edit",
+      "inventoryKit": "Consists of {{count}}x inventory items"
     },
     "payment": {
       "title": "Payments",
       "isReadyToBeCaptured": "Payment {{id}} is ready to be captured.",
       "totalPaidByCustomer": "Total paid by customer",
-      "capture": "Capture",
+      "capture": "Capture payment",
       "refund": "Refund",
+      "markAsPaid": "Mark as paid",
       "statusLabel": "Payment status",
       "statusTitle": "Payment Status",
       "status": {
@@ -770,39 +920,183 @@
         "refunded": "Refunded",
         "canceled": "Canceled",
         "requiresAction": "Requires action"
-      }
+      },
+      "capturePayment": "Payment of {{amount}} will be captured.",
+      "capturePaymentSuccess": "Payment of {{amount}} successfully captured",
+      "markAsPaidPayment": "Payment of {{amount}} will be marked as paid.",
+      "markAsPaidPaymentSuccess": "Payment of {{amount}} successfully marked as paid",
+      "createRefund": "Create Refund",
+      "refundPaymentSuccess": "Refund of amount {{amount}} successful",
+      "createRefundWrongQuantity": "Quantity should be a number between 1 and {{number}}",
+      "refundAmount": "Refund {{ amount }}",
+      "paymentLink": "Copy payment link for {{ amount }}",
+      "selectPaymentToRefund": "Select payment to refund"
     },
     "edits": {
       "title": "Edit order",
+      "confirm": "Confirm Edit",
+      "confirmText": "You are about to confirm an Order Edit. This action cannot be undone.",
+      "cancel": "Cancel Edit",
       "currentItems": "Current items",
       "currentItemsDescription": "Adjust item quantity or remove.",
       "addItemsDescription": "You can add new items to the order.",
       "addItems": "Add items",
       "amountPaid": "Amount paid",
       "newTotal": "New total",
-      "differenceDue": "Difference due"
+      "differenceDue": "Difference due",
+      "create": "Edit Order",
+      "currentTotal": "Current total",
+      "noteHint": "Add an internal note for the edit",
+      "cancelSuccessToast": "Order edit canceled",
+      "createSuccessToast": "Order edit request created",
+      "activeChangeError": "There is already active order change on the order (return, claim, exchange etc.). Please finish or cancel the change before editing the order.",
+      "panel": {
+        "title": "Order edit requested",
+        "titlePending": "Order edit pending"
+      },
+      "toast": {
+        "canceledSuccessfully": "Order edit cancelled",
+        "confirmedSuccessfully": "Order edit confirmed"
+      },
+      "validation": {
+        "quantityLowerThanFulfillment": "Cannot set quantity to be less then or equal to fulfilled quantity"
+      }
     },
     "returns": {
-      "details": "Details",
-      "chooseItems": "Choose items",
-      "refundAmount": "Refund amount",
-      "locationDescription": "Choose which location you want to return the items to.",
-      "shippingDescription": "Choose which method you want to use for this return.",
-      "noInventoryLevel": "No inventory level",
+      "create": "Create Return",
+      "confirm": "Confirm Return",
+      "confirmText": "You are about to confirm a Return. This action cannot be undone.",
+      "inbound": "Inbound",
+      "outbound": "Outbound",
       "sendNotification": "Send notification",
-      "sendNotificationHint": "Notify customer of created return.",
-      "customRefund": "Custom refund",
-      "shippingPriceTooltip1": "Custom refund is enabled",
-      "noShippingOptions": "There are no shipping options for the region",
-      "shippingPriceTooltip2": "Shipping needs to be selected",
-      "customRefundHint": "If you want to refund something else instead of the total refund.",
-      "customShippingPrice": "Custom shipping",
-      "customShippingPriceHint": "Custom shipping cost.",
+      "sendNotificationHint": "Notify customer about return.",
+      "returnTotal": "Return total",
+      "inboundTotal": "Inbound total",
+      "refundAmount": "Refund amount",
+      "outstandingAmount": "Outstanding amount",
+      "reason": "Reason",
+      "reasonHint": "Choose why the customer want to return items.",
+      "note": "Note",
+      "noInventoryLevel": "No inventory level",
       "noInventoryLevelDesc": "The selected location does not have an inventory level for the selected items. The return can be requested but can’t be received until an inventory level is created for the selected location.",
-      "refundableAmountLabel": "Refundable amount",
-      "refundableAmountHeader": "Refundable Amount",
+      "noteHint": "You can type freely if you want to specify something.",
+      "location": "Location",
+      "locationHint": "Choose which location you want to return the items to.",
+      "inboundShipping": "Return shipping",
+      "inboundShippingHint": "Choose which method you want to use.",
       "returnableQuantityLabel": "Returnable quantity",
-      "returnableQuantityHeader": "Returnable Quantity"
+      "refundableAmountLabel": "Refundable amount",
+      "returnRequestedInfo": "{{requestedItemsCount}}x items return requested",
+      "returnReceivedInfo": "{{requestedItemsCount}}x items return received",
+      "itemReceived": "Items received",
+      "returnRequested": "Return requested",
+      "damagedItemReceived": "Damaged items received",
+      "damagedItemsReturned": "{{quantity}}x damaged items returned",
+      "activeChangeError": "There is an active order change in progress on this order. Please finish or discard the change first.",
+      "cancel": {
+        "title": "Cancel Return",
+        "description": "Are you sure you want to cancel the return request?"
+      },
+      "placeholders": {
+        "noReturnShippingOptions": {
+          "title": "No return shipping options found",
+          "hint": "No return shipping options were created for the location. You can create one at <LinkComponent>Location & Shipping</LinkComponent>."
+        },
+        "outboundShippingOptions": {
+          "title": "No outbound shipping options found",
+          "hint": "No outbound shipping options were created for the location. You can create one at <LinkComponent>Location & Shipping</LinkComponent>."
+        }
+      },
+      "receive": {
+        "action": "Receive items",
+        "receiveItems": "{{ returnType }} {{ id }}",
+        "restockAll": "Restock all items",
+        "itemsLabel": "Items received",
+        "title": "Receive items for #{{returnId}}",
+        "sendNotificationHint": "Notify customer about received return.",
+        "inventoryWarning": "Please note that we will automatically adjust the inventory levels based on your input above.",
+        "writeOffInputLabel": "How many of the items are damaged?",
+        "toast": {
+          "success": "Return received successfully.",
+          "errorLargeValue": "Quantity is greater than requested item quantity.",
+          "errorNegativeValue": "Quantity cannot be a negative value.",
+          "errorLargeDamagedValue": "Damaged items quantity + non damaged received quantity exceeds total item quantity on the return. Please decrease quantity of non damaged items."
+        }
+      },
+      "toast": {
+        "canceledSuccessfully": "Return canceled successfully",
+        "confirmedSuccessfully": "Return confirmed successfully"
+      },
+      "panel": {
+        "title": "Return initiated",
+        "description": "There is an open return request to be completed"
+      }
+    },
+    "claims": {
+      "create": "Create Claim",
+      "confirm": "Confirm Claim",
+      "confirmText": "You are about to confirm a Claim. This action cannot be undone.",
+      "manage": "Manage Claim",
+      "outbound": "Outbound",
+      "outboundItemAdded": "{{itemsCount}}x added through claim",
+      "outboundTotal": "Outbound total",
+      "outboundShipping": "Outbound shipping",
+      "outboundShippingHint": "Choose which method you want to use.",
+      "refundAmount": "Estimated difference",
+      "activeChangeError": "There is an active order change on this order. Please finish or discard the previous change.",
+      "actions": {
+        "cancelClaim": {
+          "successToast": "Claim was successfully canceled."
+        }
+      },
+      "cancel": {
+        "title": "Cancel Claim",
+        "description": "Are you sure you want to cancel the claim?"
+      },
+      "tooltips": {
+        "onlyReturnShippingOptions": "This list will consist of only return shipping options."
+      },
+      "toast": {
+        "canceledSuccessfully": "Claim canceled successfully",
+        "confirmedSuccessfully": "Claim confirmed successfully"
+      },
+      "panel": {
+        "title": "Claim initiated",
+        "description": "There is an open claim request to be completed"
+      }
+    },
+    "exchanges": {
+      "create": "Create Exchange",
+      "manage": "Manage Exchange",
+      "confirm": "Confirm Exchange",
+      "confirmText": "You are about to confirm an Exchange. This action cannot be undone.",
+      "outbound": "Outbound",
+      "outboundItemAdded": "{{itemsCount}}x added through exchange",
+      "outboundTotal": "Outbound total",
+      "outboundShipping": "Outbound shipping",
+      "outboundShippingHint": "Choose which method you want to use.",
+      "refundAmount": "Estimated difference",
+      "activeChangeError": "There is an active order change on this order. Please finish or discard the previous change.",
+      "actions": {
+        "cancelExchange": {
+          "successToast": "Exchange was successfully canceled."
+        }
+      },
+      "cancel": {
+        "title": "Cancel Exchange",
+        "description": "Are you sure you want to cancel the exchange?"
+      },
+      "tooltips": {
+        "onlyReturnShippingOptions": "This list will consist of only return shipping options."
+      },
+      "toast": {
+        "canceledSuccessfully": "Exchange canceled successfully",
+        "confirmedSuccessfully": "Exchange confirmed successfully"
+      },
+      "panel": {
+        "title": "Exchange initiated",
+        "description": "There is an open exchange request to be completed"
+      }
     },
     "reservations": {
       "allocatedLabel": "Allocated",
@@ -827,27 +1121,31 @@
     "shipment": {
       "title": "Mark fulfillment shipped",
       "trackingNumber": "Tracking number",
-      "addTracking": "Add additional tracking number",
+      "addTracking": "Add tracking number",
       "sendNotification": "Send notification",
       "sendNotificationHint": "Notify the customer about this shipment.",
       "toastCreated": "Shipment created successfully."
     },
     "fulfillment": {
       "cancelWarning": "You are about to cancel a fulfillment. This action cannot be undone.",
+      "markAsDeliveredWarning": "You are about to mark fulfillment as delivered. This action cannot be undone.",
       "unfulfilledItems": "Unfulfilled Items",
       "statusLabel": "Fulfillment status",
       "statusTitle": "Fulfillment Status",
       "fulfillItems": "Fulfill items",
       "awaitingFulfillmentBadge": "Awaiting fulfillment",
+      "requiresShipping": "Requires shipping",
       "number": "Fulfillment #{{number}}",
       "itemsToFulfill": "Items to fulfill",
       "create": "Create Fulfillment",
       "available": "Available",
       "inStock": "In stock",
       "markAsShipped": "Mark as shipped",
+      "markAsDelivered": "Mark as delivered",
       "itemsToFulfillDesc": "Choose items and quantities to fulfill",
       "locationDescription": "Choose which location you want to fulfill items from.",
       "sendNotificationHint": "Notify customers about the created fulfillment.",
+      "methodDescription": "Choose a different shipping method from the one customer selected",
       "error": {
         "wrongQuantity": "Only one item is available for fulfillment",
         "wrongQuantity_other": "Quantity should be a number between 1 and {{number}}",
@@ -859,6 +1157,8 @@
         "fulfilled": "Fulfilled",
         "partiallyShipped": "Partially shipped",
         "shipped": "Shipped",
+        "delivered": "Delivered",
+        "partiallyDelivered": "Partially delivered",
         "partiallyReturned": "Partially returned",
         "returned": "Returned",
         "canceled": "Canceled",
@@ -867,7 +1167,8 @@
       "toast": {
         "created": "Fulfillment created successfully",
         "canceled": "Fulfillment successfully canceled",
-        "fulfillmentShipped": "Cannot cancel an already shipped fulfillment"
+        "fulfillmentShipped": "Cannot cancel an already shipped fulfillment",
+        "fulfillmentDelivered": "Fulfillment marked as delivered successfully"
       },
       "trackingLabel": "Tracking",
       "shippingFromLabel": "Shipping from",
@@ -902,6 +1203,10 @@
         "deleteButtonText": "Delete comment"
       },
       "events": {
+        "common": {
+          "toReturn": "To return",
+          "toSend": "To send"
+        },
         "placed": {
           "title": "Order placed",
           "fromSalesChannel": "from {{salesChannel}}"
@@ -912,21 +1217,43 @@
         "payment": {
           "awaiting": "Awaiting payment",
           "captured": "Payment captured",
-          "canceled": "Payment canceled"
+          "canceled": "Payment canceled",
+          "refunded": "Payment refunded"
         },
         "fulfillment": {
           "created": "Items fulfilled",
           "canceled": "Fulfillment canceled",
           "shipped": "Items shipped",
+          "delivered": "Items delivered",
           "items_one": "{{count}} item",
           "items_other": "{{count}} items"
         },
         "return": {
-          "created": "Return created"
+          "created": "Return #{{returnId}} requested",
+          "canceled": "Return #{{returnId}} canceled",
+          "received": "Return #{{returnId}} received",
+          "items_one": "{{count}} item returned",
+          "items_other": "{{count}} items returned"
         },
         "note": {
           "comment": "Comment",
           "byLine": "by {{author}}"
+        },
+        "claim": {
+          "created": "Claim #{{claimId}} requested",
+          "canceled": "Claim #{{claimId}} canceled",
+          "itemsInbound": "{{count}} item to return",
+          "itemsOutbound": "{{count}} item to send"
+        },
+        "exchange": {
+          "created": "Exchange #{{exchangeId}} requested",
+          "canceled": "Exchange #{{exchangeId}} canceled",
+          "itemsInbound": "{{count}} item to return",
+          "itemsOutbound": "{{count}} item to send"
+        },
+        "edit": {
+          "requested": "Order edit #{{editId}} requested",
+          "confirmed": "Order edit #{{editId}} confirmed"
         }
       }
     }
@@ -992,6 +1319,15 @@
     "delete": {
       "confirmation": "You are about to delete the stock location {{name}}. This action cannot be undone."
     },
+    "fulfillmentProviders": {
+      "header": "Fulfillment Providers",
+      "shippingOptionsTooltip": "This dropdown will only consist of providers enabled for this location. Add them to the location if the dropdown is disabled.",
+      "label": "Connected fulfillment providers",
+      "connectedTo": "Connected to {{count}} of {{total}} fulfillment providers",
+      "noProviders": "This Stock Location is not connected to any fulfillment providers.",
+      "action": "Connect Providers",
+      "successToast": "Fulfillment providers for stock location were successfully updated."
+    },
     "fulfillmentSets": {
       "pickup": {
         "header": "Pickup"
@@ -1014,10 +1350,6 @@
       "shippingProfiles": {
         "label": "Shipping Profiles",
         "description": "Group products by shipping requirements"
-      },
-      "shippingOptionTypes": {
-        "label": "Shipping Option Types",
-        "description": "Group options based on characteristic"
       }
     },
     "salesChannels": {
@@ -1428,8 +1760,15 @@
         "title": "Edit buy rules"
       }
     },
-    "addToCampaign": {
-      "title": "Promotion's Campaign"
+    "campaign": {
+      "header": "Campaign",
+      "edit": {
+        "header": "Edit Campaign",
+        "successToast": "Successfully updated the campaign of the promotion."
+      },
+      "actions": {
+        "goToCampaign": "Go to campaign"
+      }
     },
     "campaign_currency": {
       "tooltip": "This is the promotion's currency. Change it from the Details tab."
@@ -1441,7 +1780,11 @@
       "campaign": {
         "existing": {
           "title": "Existing Campaign",
-          "description": "Add promotion to an existing campaign."
+          "description": "Add promotion to an existing campaign.",
+          "placeholder": {
+            "title": "No existing campaigns",
+            "desc": "You can create one to track multiple promotions and set budget limits."
+          }
         },
         "new": {
           "title": "New Campaign",
@@ -1456,6 +1799,7 @@
         "title": "Status"
       },
       "method": {
+        "label": "Method",
         "code": {
           "title": "Promotion code",
           "description": "Customers must enter this code at checkout"
@@ -1533,6 +1877,14 @@
     "edit": {
       "header": "Edit Campaign",
       "successToast": "Campaign '{{name}}' was successfully updated."
+    },
+    "configuration": {
+      "header": "Configuration",
+      "edit": {
+        "header": "Edit Campaign Configuration",
+        "description": "Edit the configuration of the campaign.",
+        "successToast": "Campaign configuration was successfully updated."
+      }
     },
     "create": {
       "hint": "Create a promotional campaign.",
@@ -1997,28 +2349,53 @@
   },
   "returnReasons": {
     "domain": "Return Reasons",
+    "subtitle": "Manage reasons for returned items.",
     "calloutHint": "Manage the reasons to categorize returns.",
-    "deleteReasonWarning": "You are about to delete the return reason {{label}}. This action cannot be undone.",
-    "createReason": "Create Return Reason",
-    "createReasonHint": "Create a new return reason to categorize returns.",
     "editReason": "Edit Return Reason",
-    "valueTooltip": "The value should be a unique identifier for the return reason."
+    "create": {
+      "header": "Add Return Reason",
+      "subtitle": "Specify the most common reasons for returns.",
+      "hint": "Create a new return reason to categorize returns.",
+      "successToast": "Return reason {{label}} was successfully created."
+    },
+    "edit": {
+      "header": "Edit Return Reason",
+      "subtitle": "Edit the value of the return reason.",
+      "successToast": "Return reason {{label}} was successfully updated."
+    },
+    "delete": {
+      "confirmation": "You are about to delete the return reason {{label}}. This action cannot be undone.",
+      "successToast": "Return reason {{label}} was successfully deleted."
+    },
+    "fields": {
+      "value": {
+        "label": "Value",
+        "placeholder": "wrong_size",
+        "tooltip": "The value should be a unique identifier for the return reason."
+      },
+      "label": { "label": "Label", "placeholder": "Wrong size" },
+      "description": {
+        "label": "Descriptions",
+        "placeholder": "Customer received the wrong size"
+      }
+    }
   },
   "login": {
     "forgotPassword": "Forgot password? - <0>Reset</0>",
-    "title": "Log in",
-    "hint": "to continue to Medusa"
+    "title": "Welcome to Medusa",
+    "hint": "Sign in to access the account area"
   },
   "invite": {
-    "title": "Create your account",
-    "hint": "to continue to Medusa",
+    "title": "Welcome to Medusa",
+    "hint": "Create you account below",
+    "backToLogin": "Back to login",
     "createAccount": "Create account",
     "alreadyHaveAccount": "Already have an account? - <0>Log in</0>",
     "emailTooltip": "Your email cannot be changed. If you would like to use another email, a new invite must be sent.",
     "invalidInvite": "The invite is invalid or has expired.",
-    "successTitle": "Your account has been created",
+    "successTitle": "Your account has is registered",
     "successHint": "Get started with Medusa Admin right away.",
-    "successAction": "Sign in to start using Medusa",
+    "successAction": "Start Medusa Admin",
     "invalidTokenTitle": "Your invite token is invalid",
     "invalidTokenHint": "Try requesting a new invite link.",
     "passwordMismatch": "Passwords do not match",
@@ -2031,15 +2408,23 @@
     "hint": "Enter your email below, and we will send you instructions on how to reset your password.",
     "email": "Email",
     "sendResetInstructions": "Send reset instructions",
-    "backToLogin": "You can always go back - <0>Log in</0>",
+    "backToLogin": "<0>Back to login</0>",
     "newPasswordHint": "Choose a new password below.",
     "invalidTokenTitle": "Your reset token is invalid",
     "invalidTokenHint": "Try requesting a new reset link.",
     "expiredTokenTitle": "Your reset token has expired",
     "goToResetPassword": "Go to Reset Password",
     "resetPassword": "Reset password",
+    "newPassword": "New password",
+    "repeatNewPassword": "Repeat new password",
     "tokenExpiresIn": "Token expires in <0>{{time}}</0> minutes",
-    "successfulRequest": "We have sent you an email with instructions on how to reset your password. If you don't receive an email, please check your spam folder or try again."
+    "successfulRequestTitle": "Successfully sent you an email",
+    "successfulRequest": "We've sent you an email which you can use to reset your password. Check your spam folder if you haven't received it after a few minutes.",
+    "successfulResetTitle": "Password reset successful",
+    "successfulReset": "Please login in on the login page.",
+    "passwordMismatch": "Passwords do no match",
+    "invalidLinkTitle": "Your reset link is invalid",
+    "invalidLinkHint": "Try resetting your password again."
   },
   "workflowExecutions": {
     "domain": "Workflows",
@@ -2057,6 +2442,8 @@
       "runningState": "Running...",
       "awaitingState": "Awaiting",
       "failedState": "Failed",
+      "skippedState": "Skipped",
+      "skippedFailureState": "Skipped (Failure)",
       "definitionLabel": "Definition",
       "outputLabel": "Output",
       "compensateInputLabel": "Compensate input",
@@ -2079,6 +2466,7 @@
     "step": {
       "state": {
         "skipped": "Skipped",
+        "skippedFailure": "Skipped (Failure)",
         "dormant": "Dormant",
         "timeout": "Timeout"
       }
@@ -2104,6 +2492,36 @@
       "value": "Value"
     }
   },
+  "productTags": {
+    "domain": "Product Tags",
+    "create": {
+      "header": "Create Product Tag",
+      "subtitle": "Create a new product tag to categorize your products.",
+      "successToast": "Product tag {{value}} was successfully created."
+    },
+    "edit": {
+      "header": "Edit Product Tag",
+      "subtitle": "Edit the value of the product tag.",
+      "successToast": "Product tag {{value}} was successfully updated."
+    },
+    "delete": {
+      "confirmation": "You are about to delete the product tag {{value}}. This action cannot be undone.",
+      "successToast": "Product tag {{value}} was successfully deleted."
+    },
+    "fields": {
+      "value": "Value"
+    }
+  },
+  "notifications": {
+    "domain": "Notifications",
+    "emptyState": {
+      "title": "No notifications",
+      "description": "You don't have any notifications at the moment, but once you do they will live here."
+    },
+    "accessibility": {
+      "description": "notifications about Medusa activities will be listed here."
+    }
+  },
   "errors": {
     "serverError": "Server error - Try again later.",
     "invalidCredentials": "Wrong email or password"
@@ -2119,7 +2537,9 @@
     "productVariant": "Product Variant",
     "prices": "Prices",
     "available": "Available",
-    "inStock": "In stock"
+    "inStock": "In stock",
+    "added": "Added",
+    "removed": "Removed"
   },
   "fields": {
     "amount": "Amount",
@@ -2135,7 +2555,6 @@
     "inventoryItems": "Inventory items",
     "inventoryItem": "Inventory item",
     "requiredQuantity": "Required quantity",
-    "qty": "Qty",
     "description": "Description",
     "email": "Email",
     "password": "Password",
@@ -2144,6 +2563,7 @@
     "newPassword": "New Password",
     "repeatNewPassword": "Repeat New Password",
     "categories": "Categories",
+    "shippingMethod": "Shipping method",
     "configurations": "Configurations",
     "conditions": "Conditions",
     "category": "Category",
@@ -2152,12 +2572,14 @@
     "handle": "Handle",
     "subtitle": "Subtitle",
     "item": "Item",
+    "qty": "qty.",
     "limit": "Limit",
     "tags": "Tags",
     "type": "Type",
     "reason": "Reason",
     "none": "none",
     "all": "all",
+    "search": "Search",
     "percentage": "Percentage",
     "sales_channels": "Sales Channels",
     "customer_groups": "Customer Groups",
@@ -2178,6 +2600,7 @@
     "totalRedemptions": "Total Redemptions",
     "countries": "Countries",
     "paymentProviders": "Payment Providers",
+    "refundReason": "Refund Reason",
     "fulfillmentProviders": "Fulfillment Providers",
     "fulfillmentProvider": "Fulfillment Provider",
     "providers": "Providers",
@@ -2203,11 +2626,13 @@
     "variants": "Variants",
     "orders": "Orders",
     "account": "Account",
-    "total": "Total",
-    "paidTotal": "Paid total",
+    "total": "Order Total",
+    "paidTotal": "Total captured",
     "totalExclTax": "Total excl. tax",
     "subtotal": "Subtotal",
     "shipping": "Shipping",
+    "outboundShipping": "Outbound Shipping",
+    "returnShipping": "Return Shipping",
     "tax": "Tax",
     "created": "Created",
     "key": "Key",

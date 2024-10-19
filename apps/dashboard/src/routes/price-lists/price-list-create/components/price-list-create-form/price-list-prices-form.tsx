@@ -1,7 +1,8 @@
 import { HttpTypes } from "@medusajs/types"
 import { useEffect } from "react"
 import { UseFormReturn, useWatch } from "react-hook-form"
-import { DataGridRoot } from "../../../../../components/data-grid/data-grid-root"
+import { DataGrid } from "../../../../../components/data-grid"
+import { useRouteModal } from "../../../../../components/modals"
 import { useProducts } from "../../../../../hooks/api/products"
 import { usePriceListGridColumns } from "../../../common/hooks/use-price-list-grid-columns"
 import { PriceListCreateProductVariantsSchema } from "../../../common/schemas"
@@ -36,6 +37,8 @@ export const PriceListPricesForm = ({
     limit: ids.length,
     fields: "title,thumbnail,*variants",
   })
+
+  const { setCloseOnEscape } = useRouteModal()
 
   const { setValue } = form
 
@@ -74,7 +77,8 @@ export const PriceListPricesForm = ({
 
   return (
     <div className="flex size-full flex-col divide-y overflow-hidden">
-      <DataGridRoot
+      <DataGrid
+        isLoading={isLoading}
         columns={columns}
         data={products}
         getSubRows={(row) => {
@@ -83,6 +87,7 @@ export const PriceListPricesForm = ({
           }
         }}
         state={form}
+        onEditingChange={(editing) => setCloseOnEscape(!editing)}
       />
     </div>
   )

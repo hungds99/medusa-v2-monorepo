@@ -7,17 +7,17 @@ import { HttpTypes } from "@medusajs/types"
 import { Button, toast } from "@medusajs/ui"
 import { useTranslation } from "react-i18next"
 
-import { DataGridRoot } from "../../../../../components/data-grid/data-grid-root"
+import { DataGrid } from "../../../../../components/data-grid"
 import {
   RouteFocusModal,
   useRouteModal,
 } from "../../../../../components/modals/index"
+import { usePricePreferences } from "../../../../../hooks/api/price-preferences"
 import { useRegions } from "../../../../../hooks/api/regions"
 import { useUpdateShippingOptions } from "../../../../../hooks/api/shipping-options"
 import { useStore } from "../../../../../hooks/api/store"
 import { castNumber } from "../../../../../lib/cast-number"
 import { useShippingOptionPriceColumns } from "../../../common/hooks/use-shipping-option-price-columns"
-import { usePricePreferences } from "../../../../../hooks/api/price-preferences"
 
 const getInitialCurrencyPrices = (
   prices: HttpTypes.AdminShippingOptionPrice[]
@@ -83,9 +83,7 @@ export function EditShippingOptionsPricingForm({
     resolver: zodResolver(EditShippingOptionPricingSchema),
   })
 
-  const { mutateAsync, isPending: isLoading } = useUpdateShippingOptions(
-    shippingOption.id
-  )
+  const { mutateAsync, isPending } = useUpdateShippingOptions(shippingOption.id)
 
   const {
     store,
@@ -111,7 +109,10 @@ export function EditShippingOptionsPricingForm({
 
   const { price_preferences: pricePreferences } = usePricePreferences({})
 
+  const { setCloseOnEscape } = useRouteModal()
+
   const columns = useShippingOptionPriceColumns({
+    name: shippingOption.name,
     currencies,
     regions,
     pricePreferences,
@@ -126,6 +127,13 @@ export function EditShippingOptionsPricingForm({
     const currencyPrices = Object.entries(data.currency_prices)
       .map(([code, value]) => {
         if (value === "" || value === undefined) {
+          return undefined
+        }
+
+        const currencyExists = currencies.some(
+          (currencyCode) => currencyCode.toLowerCase() == code.toLowerCase()
+        )
+        if (!currencyExists) {
           return undefined
         }
 
@@ -152,6 +160,14 @@ export function EditShippingOptionsPricingForm({
     const regionPrices = Object.entries(data.region_prices)
       .map(([region_id, value]) => {
         if (value === "" || value === undefined) {
+          return undefined
+        }
+
+        // Check if the region_id exists in the regions array to avoid
+        // sending updates of region prices where the region has been
+        // deleted
+        const regionExists = regions?.some((region) => region.id === region_id)
+        if (!regionExists) {
           return undefined
         }
 
@@ -196,7 +212,7 @@ export function EditShippingOptionsPricingForm({
     )
   })
 
-  const initializing =
+  const isLoading =
     isStoreLoading || isRegionsLoading || !currencies || !regions
 
   if (isStoreError) {
@@ -213,7 +229,20 @@ export function EditShippingOptionsPricingForm({
         className="flex h-full flex-col overflow-hidden"
         onSubmit={handleSubmit}
       >
-        <RouteFocusModal.Header>
+        <RouteFocusModal.Header />
+
+        <RouteFocusModal.Body>
+          <div className="flex size-full flex-col divide-y overflow-hidden">
+            <DataGrid
+              isLoading={isLoading}
+              data={data}
+              columns={columns}
+              state={form}
+              onEditingChange={(editing) => setCloseOnEscape(!editing)}
+            />
+          </div>
+        </RouteFocusModal.Body>
+        <RouteFocusModal.Footer>
           <div className="flex items-center justify-end gap-x-2">
             <RouteFocusModal.Close asChild>
               <Button variant="secondary" size="small">
@@ -223,20 +252,14 @@ export function EditShippingOptionsPricingForm({
             <Button
               size="small"
               className="whitespace-nowrap"
-              isLoading={isLoading}
+              isLoading={isPending}
               onClick={handleSubmit}
               type="button"
             >
               {t("actions.save")}
             </Button>
           </div>
-        </RouteFocusModal.Header>
-
-        <RouteFocusModal.Body>
-          <div className="flex size-full flex-col divide-y overflow-hidden">
-            <DataGridRoot data={data} columns={columns} state={form} />
-          </div>
-        </RouteFocusModal.Body>
+        </RouteFocusModal.Footer>
       </form>
     </RouteFocusModal.Form>
   )

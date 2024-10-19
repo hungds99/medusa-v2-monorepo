@@ -1,4 +1,3 @@
-import { SalesChannel } from "@medusajs/medusa"
 import { Button, Checkbox } from "@medusajs/ui"
 import { RowSelectionState, createColumnHelper } from "@tanstack/react-table"
 import { useEffect, useMemo, useState } from "react"
@@ -141,7 +140,7 @@ export const EditSalesChannelsForm = ({
             isLoading={isLoading}
             count={count}
             filters={filters}
-            search
+            search="autofocus"
             pagination
             orderBy={["name", "created_at", "updated_at"]}
             queryObject={raw}
@@ -153,7 +152,8 @@ export const EditSalesChannelsForm = ({
   )
 }
 
-const columnHelper = createColumnHelper<SalesChannel>()
+const columnHelper =
+  createColumnHelper<HttpTypes.AdminSalesChannelResponse["sales_channel"]>()
 
 const useColumns = () => {
   const columns = useSalesChannelTableColumns()

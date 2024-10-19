@@ -1,7 +1,12 @@
 import { HttpTypes } from "@medusajs/types"
 import { Heading } from "@medusajs/ui"
 import { useTranslation } from "react-i18next"
-import { json, useLoaderData, useParams } from "react-router-dom"
+import {
+  json,
+  useLoaderData,
+  useParams,
+  useSearchParams,
+} from "react-router-dom"
 import { RouteDrawer } from "../../../components/modals"
 import { useProduct } from "../../../hooks/api/products"
 import { ProductEditVariantForm } from "./components/product-edit-variant-form"
@@ -14,23 +19,28 @@ export const ProductVariantEdit = () => {
 
   const { t } = useTranslation()
   const { id, variant_id } = useParams()
+  const [URLSearchParms] = useSearchParams()
+  const searchVariantId = URLSearchParms.get("variant_id")
 
-  const { product, isLoading, isError, error } = useProduct(id!, undefined, {
-    initialData,
-  })
-
-  const variant = product?.variants.find(
-    (v: HttpTypes.AdminProductVariant) => v.id === variant_id
+  const { product, isPending, isFetching, isError, error } = useProduct(
+    id!,
+    undefined,
+    {
+      initialData,
+    }
   )
 
-  if (!isLoading && !variant) {
+  const variant = product?.variants.find(
+    (v: HttpTypes.AdminProductVariant) =>
+      v.id === (variant_id || searchVariantId)
+  )
+
+  if (!isPending && !isFetching && !variant) {
     throw json({
       status: 404,
-      message: `Variant with ID ${variant_id} was not found.`,
+      message: `Variant with ID ${variant_id || searchVariantId} was not found.`,
     })
   }
-
-  const ready = !isLoading && !!product && !!variant
 
   if (isError) {
     throw error
@@ -41,7 +51,7 @@ export const ProductVariantEdit = () => {
       <RouteDrawer.Header>
         <Heading>{t("products.variant.edit.header")}</Heading>
       </RouteDrawer.Header>
-      {ready && (
+      {variant && (
         <ProductEditVariantForm
           product={product}
           variant={variant as unknown as HttpTypes.AdminProductVariant}

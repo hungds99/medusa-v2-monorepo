@@ -12,7 +12,10 @@ import {
 } from "@medusajs/ui"
 import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router-dom"
-import { ActionMenu } from "../../../../../components/common/action-menu"
+import {
+  Action,
+  ActionMenu,
+} from "../../../../../components/common/action-menu"
 import { Skeleton } from "../../../../../components/common/skeleton"
 import { UserLink } from "../../../../../components/common/user-link"
 import {
@@ -97,11 +100,12 @@ export const ApiKeyGeneralSection = ({ apiKey }: ApiKeyGeneralSectionProps) => {
     })
   }
 
-  const dangerousActions = [
+  const dangerousActions: Action[] = [
     {
       icon: <Trash />,
       label: t("actions.delete"),
       onClick: handleDelete,
+      disabled: !apiKey.revoked_at,
     },
   ]
 
@@ -110,6 +114,7 @@ export const ApiKeyGeneralSection = ({ apiKey }: ApiKeyGeneralSectionProps) => {
       icon: <XCircle />,
       label: t("apiKeyManagement.actions.revoke"),
       onClick: handleRevoke,
+      disabled: !!apiKey.revoked_at,
     })
   }
 
@@ -149,15 +154,11 @@ export const ApiKeyGeneralSection = ({ apiKey }: ApiKeyGeneralSectionProps) => {
           {t("fields.key")}
         </Text>
         {apiKey.type === "secret" ? (
-          <Badge size="2xsmall" className="w-fit">
-            {prettifyRedactedToken(apiKey.redacted)}
-          </Badge>
+          <Badge size="2xsmall">{prettifyRedactedToken(apiKey.redacted)}</Badge>
         ) : (
-          <Copy asChild content={apiKey.token}>
-            <Badge size="2xsmall" className="w-fit max-w-40 cursor-pointer">
-              <Text size="xsmall" leading="compact" className="truncate">
-                {prettifyRedactedToken(apiKey.redacted)}
-              </Text>
+          <Copy asChild content={apiKey.token} className="cursor-pointer">
+            <Badge size="2xsmall" className="text-ui-tag-neutral-text">
+              {prettifyRedactedToken(apiKey.redacted)}
             </Badge>
           </Copy>
         )}

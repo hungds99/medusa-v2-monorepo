@@ -1,23 +1,18 @@
-import {
-  AdminApiKeyResponse,
-  AdminProductCategoryResponse,
-  AdminTaxRegionResponse,
-  HttpTypes,
-  SalesChannelDTO,
-} from "@medusajs/types"
+import { AdminProductCategoryResponse, HttpTypes } from "@medusajs/types"
 import { Outlet, RouteObject } from "react-router-dom"
 
+import { t } from "i18next"
 import { ProtectedRoute } from "../../components/authentication/protected-route"
 import { MainLayout } from "../../components/layout/main-layout"
+import { PublicLayout } from "../../components/layout/public-layout"
 import { SettingsLayout } from "../../components/layout/settings-layout"
 import { ErrorBoundary } from "../../components/utilities/error-boundary"
-import { PriceListRes } from "../../types/api-responses"
-
 import { getCountryByIso2 } from "../../lib/data/countries"
 import {
   getProvinceByIso2,
   isProvinceInCountry,
 } from "../../lib/data/country-states"
+import { productLoader } from "../../routes/products/product-detail/loader"
 import { taxRegionLoader } from "../../routes/tax-regions/tax-region-detail/loader"
 import { RouteExtensions } from "./route-extensions"
 import { SettingsExtensions } from "./settings-extensions"
@@ -25,33 +20,21 @@ import { SettingsExtensions } from "./settings-extensions"
 // TODO: Add translations for all breadcrumbs
 export const RouteMap: RouteObject[] = [
   {
-    path: "/login",
-    lazy: () => import("../../routes/login"),
-  },
-  {
-    path: "/",
-    lazy: () => import("../../routes/home"),
-  },
-  {
-    path: "*",
-    lazy: () => import("../../routes/no-match"),
-  },
-  {
-    path: "/invite",
-    lazy: () => import("../../routes/invite"),
-  },
-  {
     element: <ProtectedRoute />,
-    errorElement: <ErrorBoundary />,
     children: [
       {
-        path: "/",
         element: <MainLayout />,
         children: [
           {
+            path: "/",
+            errorElement: <ErrorBoundary />,
+            lazy: () => import("../../routes/home"),
+          },
+          {
             path: "/products",
+            errorElement: <ErrorBoundary />,
             handle: {
-              crumb: () => "Products",
+              crumb: () => t("products.domain"),
             },
             children: [
               {
@@ -62,89 +45,124 @@ export const RouteMap: RouteObject[] = [
                     path: "create",
                     lazy: () => import("../../routes/products/product-create"),
                   },
+                  {
+                    path: "import",
+                    lazy: () => import("../../routes/products/product-import"),
+                  },
+                  {
+                    path: "export",
+                    lazy: () => import("../../routes/products/product-export"),
+                  },
                 ],
               },
               {
                 path: ":id",
-                lazy: () => import("../../routes/products/product-detail"),
+                errorElement: <ErrorBoundary />,
+                Component: Outlet,
+                loader: productLoader,
                 handle: {
                   crumb: (data: HttpTypes.AdminProductResponse) =>
                     data.product.title,
                 },
                 children: [
                   {
-                    path: "edit",
-                    lazy: () => import("../../routes/products/product-edit"),
+                    path: "",
+                    lazy: () => import("../../routes/products/product-detail"),
+                    children: [
+                      {
+                        path: "edit",
+                        lazy: () =>
+                          import("../../routes/products/product-edit"),
+                      },
+                      {
+                        path: "edit-variant",
+                        lazy: () =>
+                          import(
+                            "../../routes/product-variants/product-variant-edit"
+                          ),
+                      },
+                      {
+                        path: "sales-channels",
+                        lazy: () =>
+                          import(
+                            "../../routes/products/product-sales-channels"
+                          ),
+                      },
+                      {
+                        path: "attributes",
+                        lazy: () =>
+                          import("../../routes/products/product-attributes"),
+                      },
+                      {
+                        path: "organization",
+                        lazy: () =>
+                          import("../../routes/products/product-organization"),
+                      },
+                      {
+                        path: "media",
+                        lazy: () =>
+                          import("../../routes/products/product-media"),
+                      },
+                      {
+                        path: "prices",
+                        lazy: () =>
+                          import("../../routes/products/product-prices"),
+                      },
+                      {
+                        path: "options/create",
+                        lazy: () =>
+                          import("../../routes/products/product-create-option"),
+                      },
+                      {
+                        path: "options/:option_id/edit",
+                        lazy: () =>
+                          import("../../routes/products/product-edit-option"),
+                      },
+                      {
+                        path: "variants/create",
+                        lazy: () =>
+                          import(
+                            "../../routes/products/product-create-variant"
+                          ),
+                      },
+                      {
+                        path: "metadata/edit",
+                        lazy: () =>
+                          import("../../routes/products/product-metadata"),
+                      },
+                    ],
                   },
                   {
-                    path: "sales-channels",
-                    lazy: () =>
-                      import("../../routes/products/product-sales-channels"),
-                  },
-                  {
-                    path: "attributes",
-                    lazy: () =>
-                      import("../../routes/products/product-attributes"),
-                  },
-                  {
-                    path: "organization",
-                    lazy: () =>
-                      import("../../routes/products/product-organization"),
-                  },
-                  {
-                    path: "media",
-                    lazy: () => import("../../routes/products/product-media"),
-                  },
-                  {
-                    path: "prices",
-                    lazy: () => import("../../routes/products/product-prices"),
-                  },
-                  {
-                    path: "options/create",
-                    lazy: () =>
-                      import("../../routes/products/product-create-option"),
-                  },
-                  {
-                    path: "options/:option_id/edit",
-                    lazy: () =>
-                      import("../../routes/products/product-edit-option"),
-                  },
-                  {
-                    path: "variants/create",
-                    lazy: () =>
-                      import("../../routes/products/product-create-variant"),
-                  },
-                  {
-                    path: "metadata/edit",
-                    lazy: () =>
-                      import("../../routes/products/product-metadata"),
-                  },
-                ],
-              },
-              {
-                path: ":id/variants/:variant_id",
-                lazy: () =>
-                  import(
-                    "../../routes/product-variants/product-variant-detail"
-                  ),
-                children: [
-                  {
-                    path: "edit",
+                    path: "variants/:variant_id",
                     lazy: () =>
                       import(
-                        "../../routes/product-variants/product-variant-edit"
+                        "../../routes/product-variants/product-variant-detail"
                       ),
-                  },
-                  {
-                    path: "prices",
-                    lazy: () => import("../../routes/products/product-prices"),
-                  },
-                  {
-                    path: "manage-items",
-                    lazy: () =>
-                      import(
-                        "../../routes/product-variants/product-variant-manage-inventory-items"
-                      ),
+                    handle: {
+                      crumb: (data: HttpTypes.AdminProductVariantResponse) =>
+                        data.variant.title,
+                    },
+                    children: [
+                      {
+                        path: "edit",
+                        lazy: () =>
+                          import(
+                            "../../routes/product-variants/product-variant-edit"
+                          ),
+                      },
+                      {
+                        path: "prices",
+                        lazy: () =>
+                          import("../../routes/products/product-prices"),
+                      },
+                      {
+                        path: "manage-items",
+                        lazy: () =>
+                          import(
+                            "../../routes/product-variants/product-variant-manage-inventory-items"
+                          ),
+                      },
+                    ],
                   },
                 ],
               },
@@ -152,8 +170,9 @@ export const RouteMap: RouteObject[] = [
           },
           {
             path: "/categories",
+            errorElement: <ErrorBoundary />,
             handle: {
-              crumb: () => "Categories",
+              crumb: () => t("categories.domain"),
             },
             children: [
               {
@@ -194,14 +213,20 @@ export const RouteMap: RouteObject[] = [
                     lazy: () =>
                       import("../../routes/categories/category-organize"),
                   },
+                  {
+                    path: "metadata/edit",
+                    lazy: () =>
+                      import("../../routes/categories/categories-metadata"),
+                  },
                 ],
               },
             ],
           },
           {
             path: "/orders",
+            errorElement: <ErrorBoundary />,
             handle: {
-              crumb: () => "Orders",
+              crumb: () => t("orders.domain"),
             },
             children: [
               {
@@ -218,6 +243,11 @@ export const RouteMap: RouteObject[] = [
                       import("../../routes/orders/order-create-fulfillment"),
                   },
                   {
+                    path: "returns/:return_id/receive",
+                    lazy: () =>
+                      import("../../routes/orders/order-receive-return"),
+                  },
+                  {
                     path: "allocate-items",
                     lazy: () =>
                       import("../../routes/orders/order-allocate-items"),
@@ -227,14 +257,39 @@ export const RouteMap: RouteObject[] = [
                     lazy: () =>
                       import("../../routes/orders/order-create-shipment"),
                   },
+                  {
+                    path: "returns",
+                    lazy: () =>
+                      import("../../routes/orders/order-create-return"),
+                  },
+                  {
+                    path: "claims",
+                    lazy: () =>
+                      import("../../routes/orders/order-create-claim"),
+                  },
+                  {
+                    path: "exchanges",
+                    lazy: () =>
+                      import("../../routes/orders/order-create-exchange"),
+                  },
+                  {
+                    path: "edits",
+                    lazy: () => import("../../routes/orders/order-create-edit"),
+                  },
+                  {
+                    path: "refund",
+                    lazy: () =>
+                      import("../../routes/orders/order-create-refund"),
+                  },
                 ],
               },
             ],
           },
           {
             path: "/promotions",
+            errorElement: <ErrorBoundary />,
             handle: {
-              crumb: () => "Promotions",
+              crumb: () => t("promotions.domain"),
             },
             children: [
               {
@@ -274,7 +329,8 @@ export const RouteMap: RouteObject[] = [
           },
           {
             path: "/campaigns",
-            handle: { crumb: () => "Campaigns" },
+            errorElement: <ErrorBoundary />,
+            handle: { crumb: () => t("campaigns.domain") },
             children: [
               {
                 path: "",
@@ -295,6 +351,11 @@ export const RouteMap: RouteObject[] = [
                     lazy: () => import("../../routes/campaigns/campaign-edit"),
                   },
                   {
+                    path: "configuration",
+                    lazy: () =>
+                      import("../../routes/campaigns/campaign-configuration"),
+                  },
+                  {
                     path: "edit-budget",
                     lazy: () =>
                       import("../../routes/campaigns/campaign-budget-edit"),
@@ -310,8 +371,9 @@ export const RouteMap: RouteObject[] = [
           },
           {
             path: "/collections",
+            errorElement: <ErrorBoundary />,
             handle: {
-              crumb: () => "Collections",
+              crumb: () => t("collections.domain"),
             },
             children: [
               {
@@ -352,8 +414,9 @@ export const RouteMap: RouteObject[] = [
           },
           {
             path: "/price-lists",
+            errorElement: <ErrorBoundary />,
             handle: {
-              crumb: () => "Price Lists",
+              crumb: () => t("priceLists.domain"),
             },
             children: [
               {
@@ -372,7 +435,8 @@ export const RouteMap: RouteObject[] = [
                 lazy: () =>
                   import("../../routes/price-lists/price-list-detail"),
                 handle: {
-                  crumb: (data: PriceListRes) => data.price_list.title,
+                  crumb: (data: HttpTypes.AdminPriceListResponse) =>
+                    data.price_list.title,
                 },
                 children: [
                   {
@@ -403,8 +467,9 @@ export const RouteMap: RouteObject[] = [
           },
           {
             path: "/customers",
+            errorElement: <ErrorBoundary />,
             handle: {
-              crumb: () => "Customers",
+              crumb: () => t("customers.domain"),
             },
             children: [
               {
@@ -448,8 +513,9 @@ export const RouteMap: RouteObject[] = [
           },
           {
             path: "/customer-groups",
+            errorElement: <ErrorBoundary />,
             handle: {
-              crumb: () => "Customer Groups",
+              crumb: () => t("customerGroups.domain"),
             },
             children: [
               {
@@ -503,8 +569,9 @@ export const RouteMap: RouteObject[] = [
           },
           {
             path: "/reservations",
+            errorElement: <ErrorBoundary />,
             handle: {
-              crumb: () => "Reservations",
+              crumb: () => t("reservations.domain"),
             },
             children: [
               {
@@ -515,9 +582,7 @@ export const RouteMap: RouteObject[] = [
                   {
                     path: "create",
                     lazy: () =>
-                      import(
-                        "../../routes/reservations/reservation-list/create-reservation"
-                      ),
+                      import("../../routes/reservations/reservation-create"),
                   },
                 ],
               },
@@ -542,14 +607,20 @@ export const RouteMap: RouteObject[] = [
                         "../../routes/reservations/reservation-detail/components/edit-reservation"
                       ),
                   },
+                  {
+                    path: "metadata/edit",
+                    lazy: () =>
+                      import("../../routes/reservations/reservation-metadata"),
+                  },
                 ],
               },
             ],
           },
           {
             path: "/inventory",
+            errorElement: <ErrorBoundary />,
             handle: {
-              crumb: () => "Inventory",
+              crumb: () => t("inventory.domain"),
             },
             children: [
               {
@@ -586,6 +657,11 @@ export const RouteMap: RouteObject[] = [
                       ),
                   },
                   {
+                    path: "metadata/edit",
+                    lazy: () =>
+                      import("../../routes/inventory/inventory-metadata"),
+                  },
+                  {
                     path: "locations",
                     lazy: () =>
                       import(
@@ -598,16 +674,6 @@ export const RouteMap: RouteObject[] = [
                       import(
                         "../../routes/inventory/inventory-detail/components/adjust-inventory"
                       ),
-                  },
-                  {
-                    // TODO: create reservation
-                    path: "reservations",
-                    lazy: () => import("../../routes/customers/customer-edit"),
-                  },
-                  {
-                    // TODO: edit reservation
-                    path: "reservations/:reservation_id",
-                    lazy: () => import("../../routes/customers/customer-edit"),
                   },
                 ],
               },
@@ -625,19 +691,21 @@ export const RouteMap: RouteObject[] = [
       {
         path: "/settings",
         handle: {
-          crumb: () => "Settings",
+          crumb: () => t("app.nav.settings.header"),
         },
         element: <SettingsLayout />,
         children: [
           {
             index: true,
+            errorElement: <ErrorBoundary />,
             lazy: () => import("../../routes/settings"),
           },
           {
             path: "profile",
+            errorElement: <ErrorBoundary />,
             lazy: () => import("../../routes/profile/profile-detail"),
             handle: {
-              crumb: () => "Profile",
+              crumb: () => t("profile.domain"),
             },
             children: [
               {
@@ -648,9 +716,10 @@ export const RouteMap: RouteObject[] = [
           },
           {
             path: "regions",
+            errorElement: <ErrorBoundary />,
             element: <Outlet />,
             handle: {
-              crumb: () => "Regions",
+              crumb: () => t("regions.domain"),
             },
             children: [
               {
@@ -686,9 +755,10 @@ export const RouteMap: RouteObject[] = [
           },
           {
             path: "store",
+            errorElement: <ErrorBoundary />,
             lazy: () => import("../../routes/store/store-detail"),
             handle: {
-              crumb: () => "Store",
+              crumb: () => t("store.domain"),
             },
             children: [
               {
@@ -699,13 +769,18 @@ export const RouteMap: RouteObject[] = [
                 path: "currencies",
                 lazy: () => import("../../routes/store/store-add-currencies"),
               },
+              {
+                path: "metadata/edit",
+                lazy: () => import("../../routes/store/store-metadata"),
+              },
             ],
           },
           {
             path: "users",
+            errorElement: <ErrorBoundary />,
             element: <Outlet />,
             handle: {
-              crumb: () => "Users",
+              crumb: () => t("users.domain"),
             },
             children: [
               {
@@ -722,12 +797,16 @@ export const RouteMap: RouteObject[] = [
                 path: ":id",
                 lazy: () => import("../../routes/users/user-detail"),
                 handle: {
-                  crumb: (data: { user: UserDTO }) => data.user.email,
+                  crumb: (data: HttpTypes.AdminUserResponse) => data.user.email,
                 },
                 children: [
                   {
                     path: "edit",
                     lazy: () => import("../../routes/users/user-edit"),
+                  },
+                  {
+                    path: "metadata/edit",
+                    lazy: () => import("../../routes/users/user-metadata"),
                   },
                 ],
               },
@@ -735,9 +814,10 @@ export const RouteMap: RouteObject[] = [
           },
           {
             path: "sales-channels",
+            errorElement: <ErrorBoundary />,
             element: <Outlet />,
             handle: {
-              crumb: () => "Sales Channels",
+              crumb: () => t("salesChannels.domain"),
             },
             children: [
               {
@@ -759,7 +839,7 @@ export const RouteMap: RouteObject[] = [
                 lazy: () =>
                   import("../../routes/sales-channels/sales-channel-detail"),
                 handle: {
-                  crumb: (data: { sales_channel: SalesChannelDTO }) =>
+                  crumb: (data: HttpTypes.AdminSalesChannelResponse) =>
                     data.sales_channel.name,
                 },
                 children: [
@@ -775,15 +855,23 @@ export const RouteMap: RouteObject[] = [
                         "../../routes/sales-channels/sales-channel-add-products"
                       ),
                   },
+                  {
+                    path: "metadata/edit",
+                    lazy: () =>
+                      import(
+                        "../../routes/sales-channels/sales-channel-metadata"
+                      ),
+                  },
                 ],
               },
             ],
           },
           {
             path: "locations",
+            errorElement: <ErrorBoundary />,
             element: <Outlet />,
             handle: {
-              crumb: () => "Locations & Shipping",
+              crumb: () => t("locations.domain"),
             },
             children: [
               {
@@ -798,7 +886,7 @@ export const RouteMap: RouteObject[] = [
                 path: "shipping-profiles",
                 element: <Outlet />,
                 handle: {
-                  crumb: () => "Shipping Profiles",
+                  crumb: () => t("shippingProfile.domain"),
                 },
                 children: [
                   {
@@ -831,13 +919,6 @@ export const RouteMap: RouteObject[] = [
                 ],
               },
               {
-                path: "shipping-option-types",
-                element: <Outlet />,
-                handle: {
-                  crumb: () => "Shipping Option Types",
-                },
-              },
-              {
                 path: ":location_id",
                 lazy: () => import("../../routes/locations/location-detail"),
                 handle: {
@@ -853,6 +934,13 @@ export const RouteMap: RouteObject[] = [
                     path: "sales-channels",
                     lazy: () =>
                       import("../../routes/locations/location-sales-channels"),
+                  },
+                  {
+                    path: "fulfillment-providers",
+                    lazy: () =>
+                      import(
+                        "../../routes/locations/location-fulfillment-providers"
+                      ),
                   },
                   {
                     path: "fulfillment-set/:fset_id",
@@ -920,12 +1008,50 @@ export const RouteMap: RouteObject[] = [
               },
             ],
           },
-
           {
-            path: "workflows",
+            path: "product-tags",
+            errorElement: <ErrorBoundary />,
             element: <Outlet />,
             handle: {
-              crumb: () => "Workflows",
+              crumb: () => t("productTags.domain"),
+            },
+            children: [
+              {
+                path: "",
+                lazy: () =>
+                  import("../../routes/product-tags/product-tag-list"),
+                children: [
+                  {
+                    path: "create",
+                    lazy: () =>
+                      import("../../routes/product-tags/product-tag-create"),
+                  },
+                ],
+              },
+              {
+                path: ":id",
+                lazy: () =>
+                  import("../../routes/product-tags/product-tag-detail"),
+                handle: {
+                  crumb: (data: HttpTypes.AdminProductTagResponse) =>
+                    data.product_tag.value,
+                },
+                children: [
+                  {
+                    path: "edit",
+                    lazy: () =>
+                      import("../../routes/product-tags/product-tag-edit"),
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            path: "workflows",
+            errorElement: <ErrorBoundary />,
+            element: <Outlet />,
+            handle: {
+              crumb: () => t("workflowExecutions.domain"),
             },
             children: [
               {
@@ -955,9 +1081,10 @@ export const RouteMap: RouteObject[] = [
           },
           {
             path: "product-types",
+            errorElement: <ErrorBoundary />,
             element: <Outlet />,
             handle: {
-              crumb: () => "Product Types",
+              crumb: () => t("productTypes.domain"),
             },
             children: [
               {
@@ -990,12 +1117,11 @@ export const RouteMap: RouteObject[] = [
               },
             ],
           },
-
           {
             path: "publishable-api-keys",
             element: <Outlet />,
             handle: {
-              crumb: () => "Publishable API Keys",
+              crumb: () => t("apiKeyManagement.domain.publishable"),
             },
             children: [
               {
@@ -1027,7 +1153,7 @@ export const RouteMap: RouteObject[] = [
                     "../../routes/api-key-management/api-key-management-detail"
                   ),
                 handle: {
-                  crumb: (data: AdminApiKeyResponse) => {
+                  crumb: (data: HttpTypes.AdminApiKeyResponse) => {
                     return data.api_key.title
                   },
                 },
@@ -1054,7 +1180,7 @@ export const RouteMap: RouteObject[] = [
             path: "secret-api-keys",
             element: <Outlet />,
             handle: {
-              crumb: () => "Secret API Keys",
+              crumb: () => t("apiKeyManagement.domain.secret"),
             },
             children: [
               {
@@ -1086,7 +1212,7 @@ export const RouteMap: RouteObject[] = [
                     "../../routes/api-key-management/api-key-management-detail"
                   ),
                 handle: {
-                  crumb: (data: AdminApiKeyResponse) => {
+                  crumb: (data: HttpTypes.AdminApiKeyResponse) => {
                     return data.api_key.title
                   },
                 },
@@ -1106,7 +1232,7 @@ export const RouteMap: RouteObject[] = [
             path: "tax-regions",
             element: <Outlet />,
             handle: {
-              crumb: () => "Tax Regions",
+              crumb: () => t("taxRegions.domain"),
             },
             children: [
               {
@@ -1125,7 +1251,7 @@ export const RouteMap: RouteObject[] = [
                 Component: Outlet,
                 loader: taxRegionLoader,
                 handle: {
-                  crumb: (data: AdminTaxRegionResponse) => {
+                  crumb: (data: HttpTypes.AdminTaxRegionResponse) => {
                     return (
                       getCountryByIso2(data.tax_region.country_code)
                         ?.display_name ||
@@ -1183,7 +1309,7 @@ export const RouteMap: RouteObject[] = [
                         "../../routes/tax-regions/tax-region-province-detail"
                       ),
                     handle: {
-                      crumb: (data: AdminTaxRegionResponse) => {
+                      crumb: (data: HttpTypes.AdminTaxRegionResponse) => {
                         const countryCode =
                           data.tax_region.country_code?.toUpperCase()
                         const provinceCode =
@@ -1214,6 +1340,56 @@ export const RouteMap: RouteObject[] = [
                             "../../routes/tax-regions/tax-region-tax-rate-edit"
                           ),
                       },
+                      {
+                        path: "overrides/create",
+                        lazy: () =>
+                          import(
+                            "../../routes/tax-regions/tax-region-tax-override-create"
+                          ),
+                      },
+                      {
+                        path: "overrides/:tax_rate_id/edit",
+                        lazy: () =>
+                          import(
+                            "../../routes/tax-regions/tax-region-tax-override-edit"
+                          ),
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            path: "return-reasons",
+            element: <Outlet />,
+            handle: {
+              crumb: () => t("returnReasons.domain"),
+            },
+            children: [
+              {
+                path: "",
+                lazy: () =>
+                  import("../../routes/return-reasons/return-reason-list"),
+                children: [
+                  {
+                    path: "create",
+                    lazy: () =>
+                      import(
+                        "../../routes/return-reasons/return-reason-create"
+                      ),
+                  },
+
+                  {
+                    path: ":id",
+                    children: [
+                      {
+                        path: "edit",
+                        lazy: () =>
+                          import(
+                            "../../routes/return-reasons/return-reason-edit"
+                          ),
+                      },
                     ],
                   },
                 ],
@@ -1221,6 +1397,32 @@ export const RouteMap: RouteObject[] = [
             ],
           },
           ...SettingsExtensions,
+        ],
+      },
+    ],
+  },
+  {
+    element: <PublicLayout />,
+    children: [
+      {
+        errorElement: <ErrorBoundary />,
+        children: [
+          {
+            path: "/login",
+            lazy: () => import("../../routes/login"),
+          },
+          {
+            path: "/reset-password",
+            lazy: () => import("../../routes/reset-password"),
+          },
+          {
+            path: "/invite",
+            lazy: () => import("../../routes/invite"),
+          },
+          {
+            path: "*",
+            lazy: () => import("../../routes/no-match"),
+          },
         ],
       },
     ],

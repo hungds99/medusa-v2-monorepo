@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { CampaignResponse, PromotionDTO } from "@medusajs/types"
+import { AdminCampaign, PromotionDTO } from "@medusajs/types"
 import { Button, Checkbox, Hint, Tooltip, toast } from "@medusajs/ui"
 import { keepPreviousData } from "@tanstack/react-query"
 import {
@@ -15,13 +15,13 @@ import { RouteFocusModal, useRouteModal } from "../../../../components/modals"
 import { DataTable } from "../../../../components/table/data-table"
 import { useAddOrRemoveCampaignPromotions } from "../../../../hooks/api/campaigns"
 import { usePromotions } from "../../../../hooks/api/promotions"
-import { usePromotionTableColumns } from "../../../../hooks/table/columns-v2/use-promotion-table-columns"
+import { usePromotionTableColumns } from "../../../../hooks/table/columns/use-promotion-table-columns"
 import { usePromotionTableFilters } from "../../../../hooks/table/filters/use-promotion-table-filters"
-import { usePromotionTableQuery } from "../../../../hooks/table/query-v2/use-promotion-table-query"
+import { usePromotionTableQuery } from "../../../../hooks/table/query/use-promotion-table-query"
 import { useDataTable } from "../../../../hooks/use-data-table"
 
 type AddCampaignPromotionsFormProps = {
-  campaign: CampaignResponse
+  campaign: AdminCampaign
 }
 
 const AddCampaignPromotionsSchema = zod.object({
@@ -142,7 +142,7 @@ export const AddCampaignPromotionsForm = ({
             queryObject={raw}
             layout="fill"
             pagination
-            search
+            search="autofocus"
             noRecords={{
               message: t("campaigns.promotions.add.list.noRecordsMessage"),
             }}

@@ -1,5 +1,4 @@
 import { XCircle } from "@medusajs/icons"
-import { Order } from "@medusajs/medusa"
 import {
   Container,
   Copy,
@@ -11,21 +10,22 @@ import {
 import { format } from "date-fns"
 import { useTranslation } from "react-i18next"
 import { ActionMenu } from "../../../../../components/common/action-menu"
+import { useCancelOrder } from "../../../../../hooks/api/orders"
 import {
   getOrderFulfillmentStatus,
   getOrderPaymentStatus,
 } from "../../../../../lib/order-helpers"
-import { useCancelOrder } from "../../../../../hooks/api/orders"
+import { HttpTypes } from "@medusajs/types"
 
 type OrderGeneralSectionProps = {
-  order: Order
+  order: HttpTypes.AdminOrder
 }
 
 export const OrderGeneralSection = ({ order }: OrderGeneralSectionProps) => {
   const { t } = useTranslation()
   const prompt = usePrompt()
 
-  const { mutateAsync } = useCancelOrder(order.id)
+  const { mutateAsync: cancelOrder } = useCancelOrder(order.id)
 
   const handleCancel = async () => {
     const res = await prompt({
@@ -41,7 +41,7 @@ export const OrderGeneralSection = ({ order }: OrderGeneralSectionProps) => {
       return
     }
 
-    await mutateAsync()
+    await cancelOrder(order.id)
   }
 
   return (
@@ -82,7 +82,7 @@ export const OrderGeneralSection = ({ order }: OrderGeneralSectionProps) => {
   )
 }
 
-const FulfillmentBadge = ({ order }: { order: Order }) => {
+const FulfillmentBadge = ({ order }: { order: HttpTypes.AdminOrder }) => {
   const { t } = useTranslation()
 
   const { label, color } = getOrderFulfillmentStatus(
@@ -97,7 +97,7 @@ const FulfillmentBadge = ({ order }: { order: Order }) => {
   )
 }
 
-const PaymentBadge = ({ order }: { order: Order }) => {
+const PaymentBadge = ({ order }: { order: HttpTypes.AdminOrder }) => {
   const { t } = useTranslation()
 
   /**

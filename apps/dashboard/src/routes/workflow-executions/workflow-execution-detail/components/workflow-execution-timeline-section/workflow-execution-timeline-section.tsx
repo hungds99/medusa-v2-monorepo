@@ -15,11 +15,12 @@ import {
   STEP_INACTIVE_STATES,
   STEP_IN_PROGRESS_STATES,
   STEP_OK_STATES,
+  STEP_SKIPPED_STATES,
 } from "../../../constants"
-import { WorkflowExecutionDTO, WorkflowExecutionStep } from "../../../types"
+import { HttpTypes } from "@medusajs/types"
 
 type WorkflowExecutionTimelineSectionProps = {
-  execution: WorkflowExecutionDTO
+  execution: HttpTypes.AdminWorkflowExecutionResponse["workflow_execution"]
 }
 
 export const WorkflowExecutionTimelineSection = ({
@@ -39,12 +40,14 @@ export const WorkflowExecutionTimelineSection = ({
   )
 }
 
-const createNodeClusters = (steps: Record<string, WorkflowExecutionStep>) => {
+const createNodeClusters = (
+  steps: Record<string, HttpTypes.AdminWorkflowExecutionStep>
+) => {
   const actionableSteps = Object.values(steps).filter(
     (step) => step.id !== "_root"
   )
 
-  const clusters: Record<number, WorkflowExecutionStep[]> = {}
+  const clusters: Record<number, HttpTypes.AdminWorkflowExecutionStep[]> = {}
 
   actionableSteps.forEach((step) => {
     if (!clusters[step.depth]) {
@@ -58,7 +61,7 @@ const createNodeClusters = (steps: Record<string, WorkflowExecutionStep>) => {
 }
 
 const getNextCluster = (
-  clusters: Record<number, WorkflowExecutionStep[]>,
+  clusters: Record<number, HttpTypes.AdminWorkflowExecutionStep[]>,
   depth: number
 ) => {
   const nextDepth = depth + 1
@@ -77,7 +80,11 @@ const MAX_ZOOM = 1.5
 const MIN_ZOOM = 0.5
 const ZOOM_STEP = 0.25
 
-const Canvas = ({ execution }: { execution: WorkflowExecutionDTO }) => {
+const Canvas = ({
+  execution,
+}: {
+  execution: HttpTypes.AdminWorkflowExecutionResponse["workflow_execution"]
+}) => {
   const [zoom, setZoom] = useState<number>(1)
   const [isDragging, setIsDragging] = useState(false)
 
@@ -337,7 +344,7 @@ const Arrow = ({ depth }: { depth: number }) => {
   )
 }
 
-const Line = ({ next }: { next?: WorkflowExecutionStep[] }) => {
+const Line = ({ next }: { next?: HttpTypes.AdminWorkflowExecutionStep[] }) => {
   if (!next) {
     return null
   }
@@ -356,7 +363,7 @@ const Line = ({ next }: { next?: WorkflowExecutionStep[] }) => {
   )
 }
 
-const Node = ({ step }: { step: WorkflowExecutionStep }) => {
+const Node = ({ step }: { step: HttpTypes.AdminWorkflowExecutionStep }) => {
   if (step.id === "_root") {
     return null
   }
@@ -405,6 +412,9 @@ const Node = ({ step }: { step: WorkflowExecutionStep }) => {
             className={clx(
               "size-2 rounded-sm shadow-[inset_0_0_0_1px_rgba(0,0,0,0.12)]",
               {
+                "bg-ui-tag-neutral-bg": STEP_SKIPPED_STATES.includes(
+                  step.invoke.state
+                ),
                 "bg-ui-tag-green-icon": STEP_OK_STATES.includes(
                   step.invoke.state
                 ),

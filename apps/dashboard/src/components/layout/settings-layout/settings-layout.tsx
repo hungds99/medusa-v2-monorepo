@@ -5,12 +5,11 @@ import { Fragment, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Link, useLocation } from "react-router-dom"
 
-import { settingsRouteRegex } from "../../../lib/extension-helpers"
 import { Divider } from "../../common/divider"
-import { NavItem, NavItemProps } from "../nav-item"
+import { INavItem, NavItem } from "../nav-item"
 import { Shell } from "../shell"
 
-import routes from "virtual:medusa/routes/links"
+import { useDashboardExtension } from "../../../extensions"
 import { UserMenu } from "../user-menu"
 
 export const SettingsLayout = () => {
@@ -21,7 +20,7 @@ export const SettingsLayout = () => {
   )
 }
 
-const useSettingRoutes = (): NavItemProps[] => {
+const useSettingRoutes = (): INavItem[] => {
   const { t } = useTranslation()
 
   return useMemo(
@@ -43,12 +42,20 @@ const useSettingRoutes = (): NavItemProps[] => {
         to: "/settings/tax-regions",
       },
       {
+        label: t("returnReasons.domain"),
+        to: "/settings/return-reasons",
+      },
+      {
         label: t("salesChannels.domain"),
         to: "/settings/sales-channels",
       },
       {
         label: t("productTypes.domain"),
         to: "/settings/product-types",
+      },
+      {
+        label: t("productTags.domain"),
+        to: "/settings/product-tags",
       },
       {
         label: t("stockLocations.domain"),
@@ -59,7 +66,7 @@ const useSettingRoutes = (): NavItemProps[] => {
   )
 }
 
-const useDeveloperRoutes = (): NavItemProps[] => {
+const useDeveloperRoutes = (): INavItem[] => {
   const { t } = useTranslation()
 
   return useMemo(
@@ -81,7 +88,7 @@ const useDeveloperRoutes = (): NavItemProps[] => {
   )
 }
 
-const useMyAccountRoutes = (): NavItemProps[] => {
+const useMyAccountRoutes = (): INavItem[] => {
   const { t } = useTranslation()
 
   return useMemo(
@@ -93,21 +100,6 @@ const useMyAccountRoutes = (): NavItemProps[] => {
     ],
     [t]
   )
-}
-
-const useExtensionRoutes = (): NavItemProps[] => {
-  const links = routes.links
-
-  return useMemo(() => {
-    const settingsLinks = links.filter((link) =>
-      settingsRouteRegex.test(link.path)
-    )
-
-    return settingsLinks.map((link) => ({
-      label: link.label,
-      to: link.path,
-    }))
-  }, [links])
 }
 
 /**
@@ -123,22 +115,24 @@ const getSafeFromValue = (from: string) => {
 }
 
 const SettingsSidebar = () => {
+  const { getMenu } = useDashboardExtension()
+
   const routes = useSettingRoutes()
   const developerRoutes = useDeveloperRoutes()
-  const extensionRoutes = useExtensionRoutes()
   const myAccountRoutes = useMyAccountRoutes()
+  const extensionRoutes = getMenu("settingsExtensions")
 
   const { t } = useTranslation()
 
   return (
-    <aside className="flex flex-1 flex-col justify-between overflow-y-auto">
-      <div className="flex flex-1 flex-col">
-        <div className="bg-ui-bg-subtle sticky top-0 z-[1]">
-          <Header />
-          <div className="flex items-center justify-center px-3">
-            <Divider variant="dashed" />
-          </div>
+    <aside className="relative flex flex-1 flex-col justify-between overflow-y-auto">
+      <div className="bg-ui-bg-subtle sticky top-0">
+        <Header />
+        <div className="flex items-center justify-center px-3">
+          <Divider variant="dashed" />
         </div>
+      </div>
+      <div className="flex flex-1 flex-col">
         <div className="flex flex-1 flex-col overflow-y-auto">
           <CollapsibleSection
             label={t("app.nav.settings.general")}
@@ -219,7 +213,7 @@ const CollapsibleSection = ({
   items,
 }: {
   label: string
-  items: NavItemProps[]
+  items: INavItem[]
 }) => {
   return (
     <Collapsible.Root defaultOpen className="py-3">
@@ -229,7 +223,7 @@ const CollapsibleSection = ({
             {label}
           </Text>
           <Collapsible.Trigger asChild>
-            <IconButton size="2xsmall" variant="transparent">
+            <IconButton size="2xsmall" variant="transparent" className="static">
               <MinusMini className="text-ui-fg-muted" />
             </IconButton>
           </Collapsible.Trigger>

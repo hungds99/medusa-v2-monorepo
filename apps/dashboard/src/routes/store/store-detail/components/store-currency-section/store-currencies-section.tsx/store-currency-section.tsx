@@ -1,4 +1,4 @@
-import { CheckCircleSolid, Plus, Trash, XCircle } from "@medusajs/icons"
+import { CheckCircle, Plus, Trash, XCircle } from "@medusajs/icons"
 import { HttpTypes } from "@medusajs/types"
 import {
   Checkbox,
@@ -12,19 +12,19 @@ import { keepPreviousData } from "@tanstack/react-query"
 import { RowSelectionState, createColumnHelper } from "@tanstack/react-table"
 import { useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
+
 import { ActionMenu } from "../../../../../../components/common/action-menu"
 import { DataTable } from "../../../../../../components/table/data-table"
+import { StatusCell } from "../../../../../../components/table/table-cells/common/status-cell"
 import { useCurrencies } from "../../../../../../hooks/api/currencies"
+import { usePricePreferences } from "../../../../../../hooks/api/price-preferences"
 import { useUpdateStore } from "../../../../../../hooks/api/store"
 import { useDataTable } from "../../../../../../hooks/use-data-table"
-import { ExtendedStoreDTO } from "../../../../../../types/api-responses"
 import { useCurrenciesTableColumns } from "../../../../common/hooks/use-currencies-table-columns"
 import { useCurrenciesTableQuery } from "../../../../common/hooks/use-currencies-table-query"
-import { usePricePreferences } from "../../../../../../hooks/api/price-preferences"
-import { StatusCell } from "../../../../../../components/table/table-cells/common/status-cell"
 
 type StoreCurrencySectionProps = {
-  store: ExtendedStoreDTO
+  store: HttpTypes.AdminStore
 }
 
 const PAGE_SIZE = 10
@@ -77,7 +77,7 @@ export const StoreCurrencySection = ({ store }: StoreCurrencySectionProps) => {
   }))
 
   const { table } = useDataTable({
-    data: withTaxInclusivity ?? [] as any,
+    data: withTaxInclusivity ?? [],
     columns,
     count: count,
     getRowId: (row) => row.code,
@@ -275,21 +275,25 @@ const CurrencyActions = ({
         {
           actions: [
             {
-              icon: <Trash />,
-              label: t("actions.remove"),
-              onClick: handleRemove,
-              disabled: currency.code === defaultCurrencyCode,
-            },
-            {
               icon: preferencesMap.get(currency.code)?.is_tax_inclusive ? (
                 <XCircle />
               ) : (
-                <CheckCircleSolid />
+                <CheckCircle />
               ),
               label: preferencesMap.get(currency.code)?.is_tax_inclusive
                 ? t("store.disableTaxInclusivePricing")
                 : t("store.enableTaxInclusivePricing"),
               onClick: handleToggleTaxInclusivity,
+            },
+          ],
+        },
+        {
+          actions: [
+            {
+              icon: <Trash />,
+              label: t("actions.remove"),
+              onClick: handleRemove,
+              disabled: currency.code === defaultCurrencyCode,
             },
           ],
         },

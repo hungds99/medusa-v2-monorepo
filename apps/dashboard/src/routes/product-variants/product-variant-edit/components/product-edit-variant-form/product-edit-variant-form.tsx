@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, Heading, Input, Switch } from "@medusajs/ui"
+import { Button, Heading, Input, Switch, toast } from "@medusajs/ui"
 import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
@@ -9,14 +9,11 @@ import { Divider } from "../../../../../components/common/divider"
 import { Form } from "../../../../../components/common/form"
 import { Combobox } from "../../../../../components/inputs/combobox"
 import { CountrySelect } from "../../../../../components/inputs/country-select"
-import {
-  RouteDrawer,
-  useRouteModal,
-} from "../../../../../components/modals"
+import { RouteDrawer, useRouteModal } from "../../../../../components/modals"
 import { useUpdateProductVariant } from "../../../../../hooks/api/products"
 import {
-  parseOptionalFormData,
-  parseOptionalFormNumber,
+  transformNullableFormData,
+  transformNullableFormNumber,
 } from "../../../../../lib/form-helpers"
 import { optionalInt } from "../../../../../lib/validation"
 
@@ -98,15 +95,15 @@ export const ProductEditVariantForm = ({
       ...optional
     } = data
 
-    const nullableData = parseOptionalFormData(optional)
+    const nullableData = transformNullableFormData(optional)
 
     await mutateAsync(
       {
         id: variant.id,
-        weight: parseOptionalFormNumber(weight),
-        height: parseOptionalFormNumber(height),
-        width: parseOptionalFormNumber(width),
-        length: parseOptionalFormNumber(length),
+        weight: transformNullableFormNumber(weight),
+        height: transformNullableFormNumber(height),
+        width: transformNullableFormNumber(width),
+        length: transformNullableFormNumber(length),
         title,
         allow_backorder,
         manage_inventory,
@@ -115,7 +112,11 @@ export const ProductEditVariantForm = ({
       },
       {
         onSuccess: () => {
-          handleSuccess()
+          handleSuccess("../")
+          toast.success(t("products.variant.edit.success"))
+        },
+        onError: (error) => {
+          toast.error(error.message)
         },
       }
     )

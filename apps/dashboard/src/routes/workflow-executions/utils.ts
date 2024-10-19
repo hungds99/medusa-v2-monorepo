@@ -1,4 +1,4 @@
-import { AdminGetWorkflowExecutionsParams } from "@medusajs/medusa"
+import { HttpTypes } from "@medusajs/types"
 import { TFunction } from "i18next"
 import {
   STEP_ERROR_STATES,
@@ -11,7 +11,7 @@ import { TransactionState, TransactionStepState } from "./types"
 
 export const adminExecutionKey = {
   detail: (id: string) => ["workflow_executions", "detail", id],
-  list: (query?: AdminGetWorkflowExecutionsParams) => [
+  list: (query?: HttpTypes.AdminGetWorkflowExecutionsParams) => [
     "workflow_executions",
     "list",
     { query },
@@ -93,6 +93,8 @@ export const getStepState = (
       return t("workflowExecutions.state.notStarted")
     case TransactionStepState.SKIPPED:
       return t("workflowExecutions.step.state.skipped")
+    case TransactionStepState.SKIPPED_FAILURE:
+      return t("workflowExecutions.step.state.skippedFailure")
     case TransactionStepState.DORMANT:
       return t("workflowExecutions.step.state.dormant")
     case TransactionStepState.TIMEOUT:

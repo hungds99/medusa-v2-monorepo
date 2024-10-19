@@ -23,7 +23,7 @@ import { useCustomerGroupTableColumns } from "../../../../../hooks/table/columns
 import { useCustomerGroupTableFilters } from "../../../../../hooks/table/filters/use-customer-group-table-filters"
 import { useCustomerGroupTableQuery } from "../../../../../hooks/table/query/use-customer-group-table-query"
 import { useDataTable } from "../../../../../hooks/use-data-table"
-import { client } from "../../../../../lib/client"
+import { client, sdk } from "../../../../../lib/client"
 import { queryClient } from "../../../../../lib/query-client"
 
 type AddCustomerGroupsFormProps = {
@@ -119,10 +119,22 @@ export const AddCustomerGroupsForm = ({
        * TODO: use this for now until add customer groups to customers batch is implemented
        */
       const promises = data.customer_group_ids.map((id) =>
-        client.customerGroups.addCustomers(id, { customer_ids: [customerId] })
+        sdk.admin.customerGroup.batchCustomers(id, {
+          add: [customerId],
+        })
       )
 
       await Promise.all(promises)
+
+      toast.success(t("general.success"), {
+        description: t("customers.groups.add.success", {
+          groups: data.customer_group_ids
+            .map((id) => customer_groups?.find((g) => g.id === id))
+            .filter(Boolean)
+            .map((cg) => cg.name),
+        }),
+        dismissLabel: t("actions.close"),
+      })
 
       await queryClient.invalidateQueries({
         queryKey: customerGroupsQueryKeys.lists(),
@@ -153,19 +165,6 @@ export const AddCustomerGroupsForm = ({
                 {form.formState.errors.customer_group_ids.message}
               </Hint>
             )}
-            <RouteFocusModal.Close asChild>
-              <Button variant="secondary" size="small">
-                {t("actions.cancel")}
-              </Button>
-            </RouteFocusModal.Close>
-            <Button
-              type="submit"
-              variant="primary"
-              size="small"
-              isLoading={isPending}
-            >
-              {t("actions.save")}
-            </Button>
           </div>
         </RouteFocusModal.Header>
         <RouteFocusModal.Body className="size-full overflow-hidden">
@@ -178,13 +177,28 @@ export const AddCustomerGroupsForm = ({
             orderBy={["name", "created_at", "updated_at"]}
             isLoading={isLoading}
             layout="fill"
-            search
+            search="autofocus"
             queryObject={raw}
             noRecords={{
               message: t("customers.groups.add.list.noRecordsMessage"),
             }}
           />
         </RouteFocusModal.Body>
+        <RouteFocusModal.Footer>
+          <RouteFocusModal.Close asChild>
+            <Button variant="secondary" size="small">
+              {t("actions.cancel")}
+            </Button>
+          </RouteFocusModal.Close>
+          <Button
+            type="submit"
+            variant="primary"
+            size="small"
+            isLoading={isPending}
+          >
+            {t("actions.save")}
+          </Button>
+        </RouteFocusModal.Footer>
       </form>
     </RouteFocusModal.Form>
   )

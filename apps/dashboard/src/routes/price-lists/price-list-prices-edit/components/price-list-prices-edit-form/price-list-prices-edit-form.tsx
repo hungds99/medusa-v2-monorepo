@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
 
-import { DataGridRoot } from "../../../../../components/data-grid/data-grid-root"
+import { DataGrid } from "../../../../../components/data-grid"
 import {
   RouteFocusModal,
   useRouteModal,
@@ -40,7 +40,7 @@ export const PriceListPricesEditForm = ({
   pricePreferences,
 }: PriceListPricesEditFormProps) => {
   const { t } = useTranslation()
-  const { handleSuccess } = useRouteModal()
+  const { handleSuccess, setCloseOnEscape } = useRouteModal()
 
   const initialValue = useRef(initRecord(priceList, products))
 
@@ -92,7 +92,7 @@ export const PriceListPricesEditForm = ({
       <form onSubmit={handleSubmit} className="flex size-full flex-col">
         <RouteFocusModal.Header />
         <RouteFocusModal.Body className="flex flex-col overflow-hidden">
-          <DataGridRoot
+          <DataGrid
             columns={columns}
             data={products}
             getSubRows={(row) => {
@@ -101,6 +101,7 @@ export const PriceListPricesEditForm = ({
               }
             }}
             state={form}
+            onEditingChange={(editing) => setCloseOnEscape(!editing)}
           />
         </RouteFocusModal.Body>
         <RouteFocusModal.Footer>
@@ -202,7 +203,10 @@ function convertToPriceArray(
       for (const [currencyCode, currencyPrice] of Object.entries(
         currencyPrices || {}
       )) {
-        if (currencyPrice?.amount) {
+        if (
+          currencyPrice?.amount !== "" &&
+          typeof currencyPrice?.amount !== "undefined"
+        ) {
           prices.push({
             variantId,
             currencyCode,
@@ -215,7 +219,10 @@ function convertToPriceArray(
       for (const [regionId, regionPrice] of Object.entries(
         regionPrices || {}
       )) {
-        if (regionPrice?.amount) {
+        if (
+          regionPrice?.amount !== "" &&
+          typeof regionPrice?.amount !== "undefined"
+        ) {
           prices.push({
             variantId,
             regionId,

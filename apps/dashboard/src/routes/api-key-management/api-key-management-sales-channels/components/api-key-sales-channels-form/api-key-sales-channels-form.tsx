@@ -96,25 +96,20 @@ export const ApiKeySalesChannelsForm = ({
   })
 
   const handleSubmit = form.handleSubmit(async (values) => {
-    await mutateAsync(
-      {
-        sales_channel_ids: values.sales_channel_ids,
-      },
-      {
-        onSuccess: () => {
-          toast.success(
-            t("apiKeyManagement.salesChannels.successToast", {
-              count: values.sales_channel_ids.length,
-            })
-          )
+    await mutateAsync(values.sales_channel_ids, {
+      onSuccess: () => {
+        toast.success(
+          t("apiKeyManagement.salesChannels.successToast", {
+            count: values.sales_channel_ids.length,
+          })
+        )
 
-          handleSuccess()
-        },
-        onError: (err) => {
-          toast.error(err.message)
-        },
-      }
-    )
+        handleSuccess()
+      },
+      onError: (err) => {
+        toast.error(err.message)
+      },
+    })
   })
 
   return (
@@ -147,7 +142,7 @@ export const ApiKeySalesChannelsForm = ({
             count={count}
             pageSize={PAGE_SIZE}
             pagination
-            search
+            search="autofocus"
             isLoading={isLoading}
             queryObject={raw}
             orderBy={["name", "created_at", "updated_at"]}

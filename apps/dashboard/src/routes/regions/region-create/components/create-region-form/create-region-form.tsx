@@ -95,19 +95,13 @@ export const CreateRegionForm = ({
         is_tax_inclusive: values.is_tax_inclusive,
       },
       {
-        onError: (e) => {
-          toast.error(t("general.error"), {
-            description: e.message,
-            dismissLabel: t("actions.close"),
-          })
-        },
         onSuccess: ({ region }) => {
           toast.success(t("regions.toast.create"))
           handleSuccess(`../${region.id}`)
         },
-        // onError: (e) => {
-        //   toast.error(e.message)
-        // },
+        onError: (e) => {
+          toast.error(e.message)
+        },
       }
     )
   })
@@ -425,7 +419,7 @@ export const CreateRegionForm = ({
                   pageSize={PAGE_SIZE}
                   orderBy={["name", "code"]}
                   pagination
-                  search
+                  search="autofocus"
                   layout="fill"
                   queryObject={raw}
                   prefix={PREFIX}

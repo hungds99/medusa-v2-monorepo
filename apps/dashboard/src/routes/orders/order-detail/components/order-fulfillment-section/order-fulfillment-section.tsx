@@ -1,5 +1,11 @@
 import { Buildings, XCircle } from "@medusajs/icons"
-import { AdminOrder, FulfillmentDTO, OrderLineItemDTO } from "@medusajs/types"
+import {
+  AdminOrder,
+  AdminOrderFulfillment,
+  AdminOrderLineItem,
+  HttpTypes,
+  OrderLineItemDTO,
+} from "@medusajs/types"
 import {
   Button,
   Container,
@@ -17,7 +23,10 @@ import { Link, useNavigate } from "react-router-dom"
 import { ActionMenu } from "../../../../../components/common/action-menu"
 import { Skeleton } from "../../../../../components/common/skeleton"
 import { Thumbnail } from "../../../../../components/common/thumbnail"
-import { useCancelOrderFulfillment } from "../../../../../hooks/api/orders"
+import {
+  useCancelOrderFulfillment,
+  useMarkOrderFulfillmentAsDelivered,
+} from "../../../../../hooks/api/orders"
 import { useStockLocation } from "../../../../../hooks/api/stock-locations"
 import { formatProvider } from "../../../../../lib/format-provider"
 import { getLocaleAmount } from "../../../../../lib/money-amount-helpers"
@@ -100,25 +109,64 @@ const UnfulfilledItem = ({
 }
 
 const UnfulfilledItemBreakdown = ({ order }: { order: AdminOrder }) => {
-  const { t } = useTranslation()
-
   // Create an array of order items that haven't been fulfilled or at least not fully fulfilled
-  const unfulfilledItems = order.items!.filter(
-    (i) => i.detail.fulfilled_quantity < i.quantity
+  const unfulfilledItemsWithShipping = order.items!.filter(
+    (i) => i.requires_shipping && i.detail.fulfilled_quantity < i.quantity
   )
 
-  if (!unfulfilledItems.length) {
-    return null
-  }
+  const unfulfilledItemsWithoutShipping = order.items!.filter(
+    (i) => !i.requires_shipping && i.detail.fulfilled_quantity < i.quantity
+  )
+
+
+  return (
+    <>
+      {!!unfulfilledItemsWithShipping.length && (
+        <UnfulfilledItemDisplay
+          order={order}
+          unfulfilledItems={unfulfilledItemsWithShipping}
+          requiresShipping={true}
+        />
+      )}
+
+      {!!unfulfilledItemsWithoutShipping.length && (
+        <UnfulfilledItemDisplay
+          order={order}
+          unfulfilledItems={unfulfilledItemsWithoutShipping}
+          requiresShipping={false}
+        />
+      )}
+    </>
+  )
+}
+
+const UnfulfilledItemDisplay = ({
+  order,
+  unfulfilledItems,
+  requiresShipping = false,
+}: {
+  order: AdminOrder
+  unfulfilledItems: AdminOrderLineItem[]
+  requiresShipping: boolean
+}) => {
+  const { t } = useTranslation()
 
   return (
     <Container className="divide-y p-0">
       <div className="flex items-center justify-between px-6 py-4">
         <Heading level="h2">{t("orders.fulfillment.unfulfilledItems")}</Heading>
+
         <div className="flex items-center gap-x-4">
+          {requiresShipping && (
+            <StatusBadge color="red" className="text-nowrap">
+              {t("orders.fulfillment.requiresShipping")}
+            </StatusBadge>
+          )}
+
           <StatusBadge color="red" className="text-nowrap">
             {t("orders.fulfillment.awaitingFulfillmentBadge")}
           </StatusBadge>
+
           <ActionMenu
             groups={[
               {
@@ -126,7 +174,7 @@ const UnfulfilledItemBreakdown = ({ order }: { order: AdminOrder }) => {
                   {
                     label: t("orders.fulfillment.fulfillItems"),
                     icon: <Buildings />,
-                    to: `/orders/${order.id}/fulfillment`,
+                    to: `/orders/${order.id}/fulfillment?requires_shipping=${requiresShipping}`,
                   },
                 ],
               },
@@ -135,7 +183,7 @@ const UnfulfilledItemBreakdown = ({ order }: { order: AdminOrder }) => {
         </div>
       </div>
       <div>
-        {unfulfilledItems.map((item) => (
+        {unfulfilledItems.map((item: AdminOrderLineItem) => (
           <UnfulfilledItem
             key={item.id}
             item={item}
@@ -152,7 +200,7 @@ const Fulfillment = ({
   order,
   index,
 }: {
-  fulfillment: FulfillmentDTO
+  fulfillment: AdminOrderFulfillment
   order: AdminOrder
   index: number
 }) => {
@@ -170,7 +218,9 @@ const Fulfillment = ({
     }
   )
 
-  let statusText = "Awaiting shipping"
+  let statusText = fulfillment.requires_shipping
+    ? "Awaiting shipping"
+    : "Awaiting delivery"
   let statusColor: "blue" | "green" | "red" = "blue"
   let statusTimestamp = fulfillment.created_at
 
@@ -178,6 +228,10 @@ const Fulfillment = ({
     statusText = "Canceled"
     statusColor = "red"
     statusTimestamp = fulfillment.canceled_at
+  } else if (fulfillment.delivered_at) {
+    statusText = "Delivered"
+    statusColor = "green"
+    statusTimestamp = fulfillment.delivered_at
   } else if (fulfillment.shipped_at) {
     statusText = "Shipped"
     statusColor = "green"
@@ -185,8 +239,42 @@ const Fulfillment = ({
   }
 
   const { mutateAsync } = useCancelOrderFulfillment(order.id, fulfillment.id)
+  const { mutateAsync: markAsDelivered } = useMarkOrderFulfillmentAsDelivered(
+    order.id,
+    fulfillment.id
+  )
 
-  const showShippingButton = !fulfillment.canceled_at && !fulfillment.shipped_at
+  const showShippingButton =
+    !fulfillment.canceled_at &&
+    !fulfillment.shipped_at &&
+    !fulfillment.delivered_at &&
+    fulfillment.requires_shipping
+  const showDeliveryButton =
+    !fulfillment.canceled_at && !fulfillment.delivered_at
+
+  const handleMarkAsDelivered = async () => {
+    const res = await prompt({
+      title: t("general.areYouSure"),
+      description: t("orders.fulfillment.markAsDeliveredWarning"),
+      confirmText: t("actions.continue"),
+      cancelText: t("actions.cancel"),
+      variant: "confirmation",
+    })
+
+    if (res) {
+      await markAsDelivered(
+        {},
+        {
+          onSuccess: () => {
+            toast.success(t("orders.fulfillment.toast.fulfillmentDelivered"))
+          },
+          onError: (e) => {
+            toast.error(e.message)
+          },
+        }
+      )
+    }
+  }
 
   const handleCancel = async () => {
     if (fulfillment.shipped_at) {
@@ -338,14 +426,23 @@ const Fulfillment = ({
           )}
         </div>
       </div>
-      {showShippingButton && (
-        <div className="bg-ui-bg-subtle flex items-center justify-end rounded-b-xl px-4 py-4">
-          <Button
-            onClick={() => navigate(`./${fulfillment.id}/create-shipment`)}
-            variant="secondary"
-          >
-            {t("orders.fulfillment.markAsShipped")}
-          </Button>
+
+      {(showShippingButton || showDeliveryButton) && (
+        <div className="bg-ui-bg-subtle flex items-center justify-end rounded-b-xl px-4 py-4 gap-x-2">
+          {showDeliveryButton && (
+            <Button onClick={handleMarkAsDelivered} variant="secondary">
+              {t("orders.fulfillment.markAsDelivered")}
+            </Button>
+          )}
+
+          {showShippingButton && (
+            <Button
+              onClick={() => navigate(`./${fulfillment.id}/create-shipment`)}
+              variant="secondary"
+            >
+              {t("orders.fulfillment.markAsShipped")}
+            </Button>
+          )}
         </div>
       )}
     </Container>
