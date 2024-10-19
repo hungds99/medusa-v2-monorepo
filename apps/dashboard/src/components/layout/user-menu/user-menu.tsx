@@ -2,9 +2,7 @@ import {
   BookOpen,
   CircleHalfSolid,
   EllipsisHorizontal,
-  Keyboard,
-  OpenRectArrowOut,
-  TimelineVertical,
+  FolderOpen,
   User as UserIcon,
   XMark,
 } from "@medusajs/icons"
@@ -64,13 +62,13 @@ export const UserMenu = () => {
           </DropdownMenu.Item>
           <DropdownMenu.Item asChild>
             <Link to="https://medusajs.com/changelog/" target="_blank">
-              <TimelineVertical className="text-ui-fg-subtle mr-2" />
+              <FolderOpen className="text-ui-fg-subtle mr-2" />
               {t("app.menus.user.changelog")}
             </Link>
           </DropdownMenu.Item>
           <DropdownMenu.Separator />
           <DropdownMenu.Item onClick={toggleModal}>
-            <Keyboard className="text-ui-fg-subtle mr-2" />
+            <FolderOpen className="text-ui-fg-subtle mr-2" />
             {t("app.menus.user.shortcuts")}
           </DropdownMenu.Item>
           <ThemeToggle />
@@ -208,7 +206,7 @@ const Logout = () => {
   return (
     <DropdownMenu.Item onClick={handleLogout}>
       <div className="flex items-center gap-x-2">
-        <OpenRectArrowOut className="text-ui-fg-subtle" />
+        <FolderOpen className="text-ui-fg-subtle" />
         <span>{t("app.menus.actions.logout")}</span>
       </div>
     </DropdownMenu.Item>

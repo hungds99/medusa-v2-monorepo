@@ -2886,6 +2886,39 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@mds/admin-shared@*, @mds/admin-shared@workspace:packages/admin-shared":
+  version: 0.0.0-use.local
+  resolution: "@mds/admin-shared@workspace:packages/admin-shared"
+  dependencies:
+    "@types/react": ^18.3.2
+    tsup: ^8.0.2
+    typescript: ^5.3.3
+  languageName: unknown
+  linkType: soft
+
+"@mds/admin-vite-plugin@*, @mds/admin-vite-plugin@workspace:packages/admin-vite-plugin":
+  version: 0.0.0-use.local
+  resolution: "@mds/admin-vite-plugin@workspace:packages/admin-vite-plugin"
+  dependencies:
+    "@babel/parser": 7.25.6
+    "@babel/traverse": 7.25.6
+    "@babel/types": 7.25.6
+    "@mds/admin-shared": "*"
+    "@types/node": ^20.10.4
+    chokidar: 3.5.3
+    fdir: 6.1.1
+    magic-string: 0.30.5
+    outdent: ^0.8.0
+    picocolors: ^1.1.0
+    tsup: 8.0.1
+    typescript: 5.3.3
+    vite: ^5.2.11
+    vitest: ^2.1.3
+  peerDependencies:
+    vite: ^5.0.0
+  languageName: unknown
+  linkType: soft
+
 "@mds/api@workspace:apps/api":
   version: 0.0.0-use.local
   resolution: "@mds/api@workspace:apps/api"
@@ -2927,8 +2960,8 @@ __metadata:
     "@dnd-kit/sortable": ^8.0.0
     "@hookform/error-message": ^2.0.1
     "@hookform/resolvers": 3.4.2
-    "@medusajs/admin-shared": ^0.0.1
-    "@medusajs/admin-vite-plugin": 0.0.1
+    "@mds/admin-shared": "*"
+    "@mds/admin-vite-plugin": "*"
     "@medusajs/icons": 1.2.1
     "@medusajs/js-sdk": 0.0.1
     "@medusajs/types": 1.11.16
@@ -3004,45 +3037,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@medusajs/admin-shared@0.0.1, @medusajs/admin-shared@^0.0.1, @medusajs/admin-shared@workspace:packages/admin-shared":
-  version: 0.0.0-use.local
-  resolution: "@medusajs/admin-shared@workspace:packages/admin-shared"
-  dependencies:
-    "@types/react": ^18.3.2
-    tsup: ^8.0.2
-    typescript: ^5.3.3
-  languageName: unknown
-  linkType: soft
-
 "@medusajs/admin-shared@npm:1.0.0-rc-20241018141633":
   version: 1.0.0-rc-20241018141633
   resolution: "@medusajs/admin-shared@npm:1.0.0-rc-20241018141633"
   checksum: f09096e6241d9c9dce4ef900bc58adbe9e0cb1dd6cbcf4ddd626fb8906ef39d69f63756f6af341ee04a42dfc716a87d792f5e02886fbfefddd7585be4113faf7
   languageName: node
   linkType: hard
-
-"@medusajs/admin-vite-plugin@0.0.1, @medusajs/admin-vite-plugin@workspace:packages/admin-vite-plugin":
-  version: 0.0.0-use.local
-  resolution: "@medusajs/admin-vite-plugin@workspace:packages/admin-vite-plugin"
-  dependencies:
-    "@babel/parser": 7.25.6
-    "@babel/traverse": 7.25.6
-    "@babel/types": 7.25.6
-    "@medusajs/admin-shared": 0.0.1
-    "@types/node": ^20.10.4
-    chokidar: 3.5.3
-    fdir: 6.1.1
-    magic-string: 0.30.5
-    outdent: ^0.8.0
-    picocolors: ^1.1.0
-    tsup: 8.0.1
-    typescript: 5.3.3
-    vite: ^5.2.11
-    vitest: ^2.1.3
-  peerDependencies:
-    vite: ^5.0.0
-  languageName: unknown
-  linkType: soft
 
 "@medusajs/admin-vite-plugin@npm:1.0.0-rc-20241018141633":
   version: 1.0.0-rc-20241018141633

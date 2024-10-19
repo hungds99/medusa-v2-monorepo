@@ -1,6 +1,6 @@
 import {
   BellAlert,
-  BellAlertDone,
+  BellAlertSolid,
   InformationCircleSolid,
 } from "@medusajs/icons"
 import { HttpTypes } from "@medusajs/types"
@@ -68,7 +68,7 @@ export const Notifications = () => {
           variant="transparent"
           className="text-ui-fg-muted hover:text-ui-fg-subtle"
         >
-          {hasUnread ? <BellAlertDone /> : <BellAlert />}
+          {hasUnread ? <BellAlertSolid /> : <BellAlert />}
         </IconButton>
       </Drawer.Trigger>
       <Drawer.Content>

@@ -1,4 +1,4 @@
-import { DescendingSorting } from "@medusajs/icons"
+import { FolderOpen } from "@medusajs/icons"
 import { DropdownMenu, IconButton } from "@medusajs/ui"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
@@ -107,7 +107,7 @@ export const DataTableOrderBy = <TData,>({
     <DropdownMenu>
       <DropdownMenu.Trigger asChild>
         <IconButton size="small">
-          <DescendingSorting />
+          <FolderOpen />
         </IconButton>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content className="z-[1]" align="end">

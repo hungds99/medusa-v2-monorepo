@@ -14,6 +14,7 @@ import { DEFAULT_FIELDS } from "../../const"
 const PAGE_SIZE = 20
 
 export const OrderListTable = () => {
+  console.log("OrderListTable")
   const { t } = useTranslation()
   const { searchParams, raw } = useOrderTableQuery({
     pageSize: PAGE_SIZE,
@@ -28,6 +29,8 @@ export const OrderListTable = () => {
       placeholderData: keepPreviousData,
     }
   )
+
+  console.log("orders", orders)
 
   const filters = useOrderTableFilters()
   const columns = useOrderTableColumns({})

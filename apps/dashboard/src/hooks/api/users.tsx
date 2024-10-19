@@ -32,6 +32,8 @@ export const useMe = (
     ...options,
   })
 
+  console.log(data)
+
   return {
     ...data,
     ...rest,

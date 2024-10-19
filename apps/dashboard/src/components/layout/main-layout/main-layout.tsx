@@ -5,9 +5,9 @@ import {
   CogSixTooth,
   CurrencyDollar,
   EllipsisHorizontal,
+  FolderOpen,
   MagnifyingGlass,
   MinusMini,
-  OpenRectArrowOut,
   ReceiptPercent,
   ShoppingCart,
   SquaresPlus,
@@ -85,7 +85,7 @@ const Logout = () => {
   return (
     <DropdownMenu.Item onClick={handleLogout}>
       <div className="flex items-center gap-x-2">
-        <OpenRectArrowOut className="text-ui-fg-subtle" />
+        <FolderOpen className="text-ui-fg-subtle" />
         <span>{t("app.menus.actions.logout")}</span>
       </div>
     </DropdownMenu.Item>
